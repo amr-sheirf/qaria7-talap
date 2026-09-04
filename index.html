@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>طلب للعمل بنظام الحصة</title>
+<style>
+  :root{
+    --blue:#1261a0;
+    --blue-dark:#0b4678;
+    --brown:#8a5a2b;
+    --brown-light:#f3e7d7;
+    --border:#c9d5df;
+    --white:#fff;
+    --text:#243447;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:"Cairo","Arial",sans-serif;
+    background:#fff;
+    color:var(--text);
+  }
+  .page{
+    max-width:1000px;
+    margin:25px auto;
+    padding:25px;
+    background:#fff;
+    border:1px solid #d8dee5;
+    box-shadow:0 5px 25px rgba(0,0,0,.08);
+  }
+  .header{
+    text-align:center;
+    border-bottom:4px solid var(--blue);
+    padding-bottom:18px;
+    margin-bottom:22px;
+  }
+  .header .line1,.header .line2{font-weight:700;margin:4px 0}
+  .header .line1{font-size:22px;color:var(--blue-dark)}
+  .header .line2{font-size:19px;color:var(--brown)}
+  .title{
+    display:inline-block;
+    margin-top:15px;
+    padding:10px 25px;
+    border-radius:8px;
+    background:linear-gradient(90deg,var(--blue),var(--blue-dark));
+    color:#fff;
+    font-size:22px;
+    font-weight:700;
+  }
+  .intro{
+    background:var(--brown-light);
+    border-right:5px solid var(--brown);
+    padding:15px;
+    line-height:1.9;
+    margin-bottom:20px;
+    font-size:16px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+  }
+  .field.full{grid-column:1/-1}
+  label{
+    display:block;
+    font-weight:700;
+    color:var(--blue-dark);
+    margin-bottom:7px;
+  }
+  input[type="text"], input[type="date"], input[type="tel"], input[type="number"], textarea, select{
+    width:100%;
+    border:1px solid var(--border);
+    border-radius:7px;
+    padding:11px 12px;
+    font-size:15px;
+    outline:none;
+    background:#fff;
+    transition:.2s;
+  }
+  textarea{min-height:90px;resize:vertical}
+  input:focus,textarea:focus,select:focus{
+    border-color:var(--blue);
+    box-shadow:0 0 0 3px rgba(18,97,160,.12);
+  }
+  .section-title{
+    margin:25px 0 14px;
+    padding:9px 13px;
+    color:#fff;
+    background:var(--brown);
+    border-radius:7px;
+    font-weight:700;
+    font-size:18px;
+  }
+  .attachments{
+    border:2px dashed #b9c9d7;
+    border-radius:8px;
+    padding:18px;
+    background:#fbfdff;
+  }
+  .attachments small{display:block;margin-top:8px;color:#667}
+  .files-list{
+    margin-top:12px;
+    padding:0;
+    list-style:none;
+  }
+  .files-list li{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    padding:9px 10px;
+    margin-top:7px;
+    background:#f4f8fb;
+    border:1px solid #dce5ec;
+    border-radius:6px;
+  }
+  .actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    justify-content:center;
+    margin-top:25px;
+    padding-top:20px;
+    border-top:1px solid #dde4ea;
+  }
+  button{
+    border:0;
+    border-radius:8px;
+    padding:12px 22px;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .btn-blue{background:var(--blue);color:#fff}
+  .btn-brown{background:var(--brown);color:#fff}
+  .btn-gray{background:#e8edf1;color:#243447}
+  button:hover{filter:brightness(.95)}
+  .message{
+    margin-top:15px;
+    text-align:center;
+    font-weight:700;
+    min-height:24px;
+  }
+  .print-note{
+    text-align:center;
+    color:#6a7680;
+    font-size:13px;
+    margin-top:15px;
+  }
+  @media(max-width:700px){
+    .page{margin:0;padding:15px;border:0;box-shadow:none}
+    .grid{grid-template-columns:1fr}
+    .field.full{grid-column:auto}
+    .header .line1{font-size:18px}
+    .header .line2,.title{font-size:16px}
+  }
+  @media print{
+    body{background:#fff}
+    .page{max-width:none;margin:0;padding:10px;border:0;box-shadow:none}
+    .actions,.print-note,.message,.remove-file,.section-title.attach-title{display:none!important}
+    input,textarea,select{border:0;padding:4px;background:#fff;box-shadow:none}
+    .attachments{border:1px solid #bbb}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="line1">مديرية التربية والتعليم بكفر الشيخ</div>
+    <div class="line2">إدارة الحامول التعليمية</div>
+    <div class="title">طلب للعمل بنظام الحصة خلال العام الدراسي 2023/2022م</div>
+  </div>
+
+  <div class="intro">
+    السيد الأستاذ / <strong>مدير مدرسة قرية 7 الابتدائية</strong><br>
+    أرغب بالعمل بالحصة لتدريس مادة:
+    <input id="subject" type="text" style="display:inline-block;width:300px;max-width:100%;vertical-align:middle" placeholder="اكتب المادة">
+  </div>
+
+  <div class="grid">
+    <div class="field">
+      <label for="name">الاسم رباعي</label>
+      <input id="name" type="text" placeholder="أدخل الاسم رباعي">
+    </div>
+
+    <div class="field">
+      <label for="birthDate">تاريخ الميلاد</label>
+      <input id="birthDate" type="date">
+    </div>
+
+    <div class="field">
+      <label for="nationalId">الرقم القومي</label>
+      <input id="nationalId" type="text" inputmode="numeric" maxlength="14" placeholder="أدخل الرقم القومي">
+    </div>
+
+    <div class="field">
+      <label for="qualification">المؤهل الدراسي</label>
+      <input id="qualification" type="text" placeholder="أدخل المؤهل الدراسي">
+    </div>
+
+    <div class="field">
+      <label for="specialization">التخصص</label>
+      <input id="specialization" type="text" placeholder="أدخل التخصص">
+    </div>
+
+    <div class="field">
+      <label for="phone">التليفون المحمول</label>
+      <input id="phone" type="tel" placeholder="01xxxxxxxxx">
+    </div>
+
+    <div class="field full">
+      <label for="address">محل الإقامة تفصيليًا</label>
+      <textarea id="address" placeholder="اكتب محل الإقامة بالتفصيل"></textarea>
+    </div>
+  </div>
+
+  <div class="section-title attach-title">المرفقات</div>
+  <div class="attachments">
+    <label for="attachments">إرفاق الملفات</label>
+    <input id="attachments" type="file" accept=".pdf,.jpg,.jpeg,application/pdf,image/jpeg" multiple>
+    <small>المسموح: PDF أو JPG/JPEG. يمكن اختيار أكثر من ملف.</small>
+    <ul id="filesList" class="files-list"></ul>
+  </div>
+
+  <div class="actions">
+    <button class="btn-blue" type="button" onclick="queryRecord()">استعلام</button>
+    <button class="btn-brown" type="button" onclick="saveRecord()">حفظ</button>
+    <button class="btn-gray" type="button" onclick="window.print()">حفظ وطباعة</button>
+    <button class="btn-gray" type="button" onclick="clearForm()">مسح</button>
+  </div>
+
+  <div id="message" class="message"></div>
+  <div class="print-note">يُفضّل استخدام زر «حفظ وطباعة» بعد مراجعة البيانات.</div>
+</div>
+
+<script>
+// ⚠️ استبدل الرابط ده برابط نشر Apps Script بتاعك (ينتهي بـ /exec)
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyQp1VAlUvr_kz6L6UWhhH-EtHUQBxZAfAvHV1GpBB_hYqEe8hN2DC_DAZNZXwFCmeasQ/exec";
+
+const fieldIds = [
+  "subject","name","birthDate","nationalId",
+  "qualification","specialization","phone","address"
+];
+
+let selectedFiles = [];
+
+/**
+ * استدعاء الباك إند (Apps Script) عن طريق fetch بدل google.script.run،
+ * لأن الصفحة دلوقتي مستضافة على دومين تاني (Cloudflare Pages).
+ * ملحوظة: بنستخدم text/plain لتجنب preflight (OPTIONS) لأن Apps Script
+ * مبيدعمش الـ CORS preflight بشكل رسمي.
+ */
+async function callServer(action, payload){
+  if (!WEB_APP_URL || WEB_APP_URL.includes("XXXX")) {
+    throw new Error("لم يتم ضبط رابط الخادم (WEB_APP_URL) بعد.");
+  }
+  const res = await fetch(WEB_APP_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ action, ...payload })
+  });
+  if (!res.ok) throw new Error("تعذر الاتصال بالخادم (خطأ " + res.status + ").");
+  const response = await res.json();
+  if (!response.success) throw new Error(response.message || "حدث خطأ في الخادم.");
+  return response.result;
+}
+
+document.getElementById("attachments").addEventListener("change", function(e){
+  const allowed = ["application/pdf","image/jpeg"];
+  const bad = [];
+  [...e.target.files].forEach(file=>{
+    if(!allowed.includes(file.type) && !/\.(pdf|jpe?g)$/i.test(file.name)) bad.push(file.name);
+    else selectedFiles.push(file);
+  });
+  e.target.value = "";
+  renderFiles();
+  if(bad.length) showMessage("تم تجاهل ملفات غير مسموح بها: " + bad.join("، "), true);
+});
+
+function renderFiles(){
+  const list = document.getElementById("filesList");
+  list.innerHTML = "";
+  selectedFiles.forEach((file,index)=>{
+    const li = document.createElement("li");
+    li.innerHTML = `<span>${escapeHtml(file.name)}</span>
+      <button class="remove-file btn-gray" type="button" onclick="removeFile(${index})">حذف</button>`;
+    list.appendChild(li);
+  });
+}
+
+function removeFile(index){
+  selectedFiles.splice(index,1);
+  renderFiles();
+}
+
+function getFormData(){
+  const data = {};
+  fieldIds.forEach(id => data[id] = document.getElementById(id).value.trim());
+  return data;
+}
+
+function validate(data){
+  if(!data.name) return "يرجى إدخال الاسم رباعي.";
+  if(!data.birthDate) return "يرجى اختيار تاريخ الميلاد.";
+  if(!data.nationalId) return "يرجى إدخال الرقم القومي.";
+  if(data.nationalId.length !== 14 || !/^\d{14}$/.test(data.nationalId))
+    return "الرقم القومي يجب أن يتكون من 14 رقمًا.";
+  return "";
+}
+
+async function saveRecord(){
+  const data = getFormData();
+  const error = validate(data);
+  if(error){ showMessage(error,true); return; }
+
+  showMessage("جاري حفظ البيانات...");
+  try {
+    const attachments = await prepareAttachments();
+    const result = await callServer("save", { data, attachments });
+    showMessage(result.message || "تم حفظ البيانات بنجاح.");
+  } catch(err) {
+    showMessage(err.message || "حدث خطأ أثناء الحفظ.", true);
+  }
+}
+
+async function prepareAttachments(){
+  const allowed = ["application/pdf", "image/jpeg"];
+  const files = [];
+  for (const file of selectedFiles) {
+    if(!allowed.includes(file.type) && !/\.(pdf|jpe?g)$/i.test(file.name)) {
+      throw new Error("المرفق غير مسموح: " + file.name);
+    }
+    const base64 = await fileToBase64(file);
+    files.push({name:file.name, mimeType:file.type || "application/octet-stream", base64});
+  }
+  return files;
+}
+
+function fileToBase64(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("تعذر قراءة الملف: " + file.name));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function queryRecord(){
+  const nationalId = document.getElementById("nationalId").value.trim();
+  if(!nationalId){
+    showMessage("أدخل الرقم القومي ثم اضغط «استعلام».", true);
+    return;
+  }
+
+  showMessage("جاري الاستعلام...");
+  try {
+    const result = await callServer("query", { nationalId });
+    if(!result || !result.found){
+      showMessage(result && result.message ? result.message : "لا توجد بيانات.", true);
+      return;
+    }
+    const record = result.data;
+    fieldIds.forEach(id=>{
+      if(record[id] !== undefined && record[id] !== null) {
+        document.getElementById(id).value = record[id];
+      }
+    });
+    selectedFiles = [];
+    renderFiles();
+    showMessage("تم العثور على البيانات واستدعاؤها بنجاح.");
+  } catch(err) {
+    showMessage(err.message || "حدث خطأ أثناء الاستعلام.", true);
+  }
+}
+
+function clearForm(){
+  fieldIds.forEach(id=> document.getElementById(id).value = "");
+  selectedFiles = [];
+  renderFiles();
+  showMessage("");
+}
+
+function showMessage(text, error=false){
+  const el = document.getElementById("message");
+  el.textContent = text;
+  el.style.color = error ? "#a12622" : "#1261a0";
+}
+
+function escapeHtml(text){
+  return text.replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[c]));
+}
+</script>
+</body>
+</html>
