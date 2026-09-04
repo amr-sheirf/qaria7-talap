@@ -161,42 +161,104 @@ function saveRecord(data, attachments) {
   };
 }
 
-function queryRecord(nationalId) {
-  nationalId = String(nationalId || '').trim();
-  if (!nationalId) throw new Error('أدخل الرقم القومي أولًا.');
-
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = ss.getSheetByName(SHEET_NAME);
-  if (!sheet || sheet.getLastRow() < 2) {
-    return { found: false, message: 'لا توجد بيانات محفوظة حتى الآن.' };
+async function queryRecord(){
+  // 1. ظهور نافذة لإدخال الرقم القومي
+  const nationalId = prompt("الرجاء إدخال الرقم القومي للاستعلام عن الطلب:", "");
+  
+  // إذا ضغط المستخدم "إلغاء"
+  if (nationalId === null) {
+    return;
   }
 
-  // نقرأ جميع الأعمدة (حتى العمود 13)
-  const data = sheet.getRange(2, 1, sheet.getLastRow() - 1, 13).getDisplayValues();
-  for (let i = 0; i < data.length; i++) {
-    if (String(data[i][3]).trim() === nationalId) {
-      return {
-        found: true,
-        data: {
-          recordId: data[i][0],
-          name: data[i][1],
-          birthDate: normalizeDateForInput_(data[i][2]),
-          nationalId: data[i][3],
-          qualification: data[i][4],
-          specialization: data[i][5],
-          phone: data[i][6],
-          address: data[i][7],
-          subject: data[i][8],
-          attachments: data[i][9],
-          savedAt: data[i][10],
-          status: data[i][11] || '',        // الحالة
-          rejectionReason: data[i][12] || '' // سبب الرفض
-        }
-      };
+  const trimmedId = nationalId.trim();
+  if (!trimmedId) {
+    showMessage("لم تدخل أي رقم. يرجى المحاولة مرة أخرى.", true);
+    return;
+  }
+
+  // التحقق من صحة الرقم (14 رقم)
+  if (!/^\d{14}$/.test(trimmedId)) {
+    alert("⚠️ الرقم القومي يجب أن يتكون من 14 رقمًا.");
+    showMessage("الرقم القومي غير صحيح.", true);
+    return;
+  }
+
+  // تحديث حقل الرقم القومي في النموذج للرجوع إليه
+  document.getElementById("nationalId").value = trimmedId;
+
+  showMessage("جاري الاستعلام عن الرقم: " + trimmedId + "...");
+  try {
+    const result = await callServer("query", { nationalId: trimmedId });
+    
+    if(!result || !result.found){
+      // عرض رسالة في نافذة منبثقة عند عدم العثور
+      alert("❌ لم يتم العثور على طلب بهذا الرقم القومي.");
+      showMessage(result && result.message ? result.message : "لا توجد بيانات.", true);
+      document.getElementById("statusDisplay").classList.remove("show");
+      return;
     }
-  }
 
-  return { found: false, message: 'لا توجد بيانات محفوظة لهذا الرقم القومي.' };
+    const record = result.data;
+
+    // تعبئة الحقول في النموذج بالبيانات المسترجعة
+    fieldIds.forEach(id=>{
+      if(record[id] !== undefined && record[id] !== null) {
+        document.getElementById(id).value = record[id];
+      }
+    });
+
+    // ============================================================
+    // 2. عرض نتيجة الطلب في نافذة منبثقة (alert) بشكل منسق
+    // ============================================================
+    let statusMsg = `✅ تم العثور على الطلب.\n\n`;
+    statusMsg += `👤 الاسم: ${record.name || 'غير محدد'}\n`;
+    statusMsg += `🆔 الرقم القومي: ${record.nationalId}\n`;
+    statusMsg += `📋 الحالة: ${record.status || 'لم تحدد بعد'}\n`;
+    if (record.status && record.status.trim().toLowerCase() === "مرفوض" && record.rejectionReason) {
+      statusMsg += `❌ سبب الرفض: ${record.rejectionReason}\n`;
+    }
+    alert(statusMsg);
+    // ============================================================
+
+    // عرض الحالة في واجهة الصفحة (أسفل الحقول) أيضاً
+    const statusDisplay = document.getElementById("statusDisplay");
+    const statusValue = document.getElementById("statusValue");
+    const reasonDisplay = document.getElementById("rejectionReasonDisplay");
+    if (record.status) {
+      statusDisplay.classList.add("show");
+      statusValue.textContent = record.status;
+      if (record.status.trim().toLowerCase() === "مرفوض" && record.rejectionReason) {
+        reasonDisplay.style.display = "block";
+        reasonDisplay.textContent = "سبب الرفض: " + record.rejectionReason;
+      } else {
+        reasonDisplay.style.display = "none";
+      }
+    } else {
+      statusDisplay.classList.remove("show");
+    }
+
+    // تحديث قائمة المرفقات المعروضة (للطباعة)
+    if (record.attachments) {
+      const printList = document.getElementById("filesListPrint");
+      printList.innerHTML = "";
+      const links = record.attachments.split('\n').filter(l=>l.trim());
+      links.forEach(link=>{
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.href = link;
+        a.textContent = "رابط المرفق";
+        a.target = "_blank";
+        li.appendChild(a);
+        printList.appendChild(li);
+      });
+    }
+
+    showMessage("تم استدعاء البيانات بنجاح.");
+
+  } catch(err) {
+    alert("⚠️ حدث خطأ أثناء الاستعلام: " + (err.message || "خطأ غير معروف"));
+    showMessage(err.message || "حدث خطأ أثناء الاستعلام.", true);
+  }
 }
 
 function validateData_(data) {
