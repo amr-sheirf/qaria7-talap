@@ -495,21 +495,7 @@ function fillPrintTemplate(data) {
     statusContainer.style.display = 'none';
   }
 
-  // المرفقات (نعرض أسماء الملفات المختارة حالياً، أو روابط إن وجدت)
-  const list = document.getElementById('p_attachmentsList');
-  list.innerHTML = '';
-  if (selectedFiles.length > 0) {
-    selectedFiles.forEach(file => {
-      const li = document.createElement('li');
-      li.textContent = file.name;
-      list.appendChild(li);
-    });
-  } else {
-    const li = document.createElement('li');
-    li.textContent = 'لا توجد مرفقات مضافة.';
-    list.appendChild(li);
-  }
-}
+ 
 
 // ----- الاستعلام (بـ prompt و alert) -----
 async function queryRecord(){
