@@ -1,4 +1,637 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>طلب للعمل بنظام الحصة</title>
+<style>
+  :root{
+    --blue:#1261a0;
+    --blue-dark:#0b4678;
+    --brown:#8a5a2b;
+    --brown-light:#f3e7d7;
+    --border:#c9d5df;
+    --white:#fff;
+    --text:#243447;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:"Cairo","Arial",sans-serif;
+    background:#f2f4f7;
+    color:var(--text);
+  }
+  
+  /* ===== واجهة الإدخال (تظهر في الشاشة فقط) ===== */
+  #mainForm {
+    max-width:1000px;
+    margin:25px auto;
+    padding:25px;
+    background:#fff;
+    border:1px solid #d8dee5;
+    box-shadow:0 5px 25px rgba(0,0,0,.08);
+  }
+  .header{
+    text-align:center;
+    border-bottom:4px solid var(--blue);
+    padding-bottom:18px;
+    margin-bottom:22px;
+  }
+  .header .line1,.header .line2{font-weight:700;margin:4px 0}
+  .header .line1{font-size:22px;color:var(--blue-dark)}
+  .header .line2{font-size:19px;color:var(--brown)}
+  .title{
+    display:inline-block;
+    margin-top:15px;
+    padding:10px 25px;
+    border-radius:8px;
+    background:linear-gradient(90deg,var(--blue),var(--blue-dark));
+    color:#fff;
+    font-size:22px;
+    font-weight:700;
+  }
+  .intro{
+    background:var(--brown-light);
+    border-right:5px solid var(--brown);
+    padding:15px;
+    line-height:1.9;
+    margin-bottom:20px;
+    font-size:16px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+  }
+  .field.full{grid-column:1/-1}
+  label{
+    display:block;
+    font-weight:700;
+    color:var(--blue-dark);
+    margin-bottom:7px;
+  }
+  input[type="text"], input[type="date"], input[type="tel"], textarea, select{
+    width:100%;
+    border:1px solid var(--border);
+    border-radius:7px;
+    padding:11px 12px;
+    font-size:15px;
+    outline:none;
+    background:#fff;
+    transition:.2s;
+  }
+  textarea{min-height:90px;resize:vertical}
+  input:focus,textarea:focus,select:focus{
+    border-color:var(--blue);
+    box-shadow:0 0 0 3px rgba(18,97,160,.12);
+  }
+  .section-title{
+    margin:25px 0 14px;
+    padding:9px 13px;
+    color:#fff;
+    background:var(--brown);
+    border-radius:7px;
+    font-weight:700;
+    font-size:18px;
+  }
+  .attachments{
+    border:2px dashed #b9c9d7;
+    border-radius:8px;
+    padding:18px;
+    background:#fbfdff;
+  }
+  .attachments small{display:block;margin-top:8px;color:#667}
+  .files-list{
+    margin-top:12px;
+    padding:0;
+    list-style:none;
+  }
+  .files-list li{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    padding:9px 10px;
+    margin-top:7px;
+    background:#f4f8fb;
+    border:1px solid #dce5ec;
+    border-radius:6px;
+  }
+  .actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    justify-content:center;
+    margin-top:25px;
+    padding-top:20px;
+    border-top:1px solid #dde4ea;
+  }
+  button{
+    border:0;
+    border-radius:8px;
+    padding:12px 22px;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .btn-blue{background:var(--blue);color:#fff}
+  .btn-brown{background:var(--brown);color:#fff}
+  .btn-gray{background:#e8edf1;color:#243447}
+  button:hover{filter:brightness(.95)}
+  .message{
+    margin-top:15px;
+    text-align:center;
+    font-weight:700;
+    min-height:24px;
+  }
+  .print-note{
+    text-align:center;
+    color:#6a7680;
+    font-size:13px;
+    margin-top:15px;
+  }
+  .status-display { display: none; margin: 15px 0; }
+  .status-display.show { display: block; }
+  .status-box {
+    padding: 10px;
+    border: 2px solid var(--blue);
+    border-radius: 8px;
+    background: #eef6fc;
+    font-weight: 700;
+    text-align: center;
+  }
+  .rejection-reason { color: #a12622; margin-top: 5px; }
+
+  /* ====================================================
+     🖨️ قالب الطباعة - صمم هنا كما تشاء 
+     ==================================================== */
+  .print-only {
+    display: none; /* مخفي في الشاشة */
+  }
+
+  @media print {
+    /* إخفاء واجهة الإدخال والأزرار */
+    #mainForm, .actions, .message, .print-note {
+      display: none !important;
+    }
+    /* إظهار قالب الطباعة */
+    .print-only {
+      display: block !important;
+      margin: 0 auto;
+      padding: 20px 30px;
+      max-width: 100%;
+      font-family: "Cairo", sans-serif;
+      background: #fff;
+      color: #000;
+      direction: rtl;
+    }
+    /* منع تكسر الصفحات داخل العناصر */
+    .print-only .print-section {
+      page-break-inside: avoid;
+    }
+    /* تنسيقات الطباعة الأساسية */
+    .print-only h1 { font-size: 22pt; margin: 5px 0; }
+    .print-only h2 { font-size: 18pt; margin: 5px 0; }
+    .print-only h3 { font-size: 16pt; margin: 5px 0; }
+    .print-only .header-print { text-align: center; border-bottom: 3px solid #1261a0; padding-bottom: 12px; }
+    .print-only .header-print .org { font-weight: 700; font-size: 20pt; color: #0b4678; }
+    .print-only .header-print .dept { font-weight: 700; font-size: 16pt; color: #8a5a2b; }
+    .print-only .header-print .title-print { font-size: 18pt; font-weight: 700; background: #1261a0; color: #fff; padding: 8px 20px; border-radius: 8px; display: inline-block; margin-top: 8px; }
+    .print-only .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 25px; margin: 15px 0; padding: 10px; border: 1px solid #ccc; border-radius: 8px; }
+    .print-only .info-grid .item { display: flex; align-items: baseline; padding: 4px 0; border-bottom: 1px dotted #ddd; }
+    .print-only .info-grid .item .label { font-weight: 700; min-width: 100px; color: #0b4678; }
+    .print-only .info-grid .item .value { font-weight: 500; }
+    .print-only .status-print { margin: 15px 0; padding: 10px; border: 2px solid #1261a0; border-radius: 8px; background: #eef6fc; text-align: center; font-weight: 700; font-size: 14pt; }
+    .print-only .status-print .rejected { color: #a12622; }
+    .print-only .attachments-print { margin: 15px 0; padding: 10px; border: 1px solid #aaa; background: #f9f9f9; }
+    .print-only .attachments-print ul { list-style: none; padding: 0; }
+    .print-only .attachments-print ul li { padding: 3px 0; border-bottom: 1px dotted #ccc; }
+    .print-only .signature-area { margin-top: 30px; padding-top: 15px; border-top: 2px solid #333; display: flex; justify-content: space-between; font-size: 14pt; }
+    .print-only .signature-area div { display: inline-block; }
+  }
+
+  @media(max-width:700px){
+    #mainForm { margin:0; padding:15px; border:0; box-shadow:none; }
+    .grid{ grid-template-columns:1fr; }
+    .field.full{ grid-column:auto; }
+    .header .line1{ font-size:18px; }
+    .header .line2,.title{ font-size:16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================= -->
+<!-- 1. واجهة الإدخال (تظهر في الشاشة) -->
+<!-- ============================================================= -->
+<div id="mainForm">
+  <div class="header">
+    <div class="line1">مديرية التربية والتعليم بكفر الشيخ</div>
+    <div class="line2">إدارة الحامول التعليمية</div>
+    <div class="title">طلب للعمل بنظام الحصة خلال العام الدراسي 2023/2022م</div>
+  </div>
+
+  <div class="intro">
+    السيد الأستاذ / <strong>مدير مدرسة قرية 7 الابتدائية</strong><br>
+    أرغب بالعمل بالحصة لتدريس مادة:
+    <input id="subject" type="text" style="display:inline-block;width:300px;max-width:100%;vertical-align:middle" placeholder="اكتب المادة">
+  </div>
+
+  <div class="grid">
+    <div class="field"><label for="name">الاسم رباعي</label><input id="name" type="text" placeholder="أدخل الاسم رباعي"></div>
+    <div class="field"><label for="birthDate">تاريخ الميلاد</label><input id="birthDate" type="date"></div>
+    <div class="field"><label for="nationalId">الرقم القومي</label><input id="nationalId" type="text" inputmode="numeric" maxlength="14" placeholder="أدخل الرقم القومي"></div>
+    <div class="field"><label for="qualification">المؤهل الدراسي</label><input id="qualification" type="text" placeholder="أدخل المؤهل الدراسي"></div>
+    <div class="field"><label for="specialization">التخصص</label><input id="specialization" type="text" placeholder="أدخل التخصص"></div>
+    <div class="field"><label for="phone">التليفون المحمول</label><input id="phone" type="tel" placeholder="01xxxxxxxxx"></div>
+    <div class="field full"><label for="address">محل الإقامة تفصيليًا</label><textarea id="address" placeholder="اكتب محل الإقامة بالتفصيل"></textarea></div>
+  </div>
+
+  <!-- عرض حالة الطلب (تظهر بعد الاستعلام) -->
+  <div id="statusDisplay" class="status-display">
+    <div class="status-box">
+      <span class="status-label">حالة الطلب:</span>
+      <span id="statusValue" class="status-value">---</span>
+      <div id="rejectionReasonDisplay" class="rejection-reason" style="display:none;"></div>
+    </div>
+  </div>
+
+  <div class="section-title">المرفقات</div>
+  <div class="attachments">
+    <label for="attachments">إرفاق الملفات</label>
+    <input id="attachments" type="file" accept=".pdf,.jpg,.jpeg,application/pdf,image/jpeg" multiple>
+    <small>المسموح: PDF أو JPG/JPEG. يمكن اختيار أكثر من ملف.</small>
+    <ul id="filesList" class="files-list"></ul>
+  </div>
+
+  <div class="actions">
+    <button class="btn-blue" type="button" onclick="queryRecord()">استعلام</button>
+    <button class="btn-brown" type="button" onclick="saveAndPrint()">حفظ وطباعة</button>
+    <button class="btn-gray" type="button" onclick="clearForm()">مسح</button>
+  </div>
+
+  <div id="message" class="message"></div>
+  <div class="print-note">بعد الحفظ، سيتم طباعة النموذج. تأكد من صحة البيانات.</div>
+</div>
+
 <!-- ============================================================= -->
 <!-- 2. 🖨️ قالب الطباعة (يظهر فقط عند الطباعة)                      -->
 <!--    ✏️ عدل التصميم هنا كما تحب (أضف جداول، صور، توقيعات...) -->
 <!-- ============================================================= -->
+<div class="print-only" id="printOnly">
+  
+  <!-- رأس الصفحة -->
+  <div class="header-print">
+    <div class="org">مديرية التربية والتعليم بكفر الشيخ</div>
+    <div class="dept">إدارة الحامول التعليمية</div>
+    <div class="title-print">طلب للعمل بنظام الحصة</div>
+    <div style="font-size: 14pt; margin-top:5px;">العام الدراسي 2023/2022م</div>
+  </div>
+
+  <!-- بيانات الطلب -->
+  <div class="info-grid">
+    <div class="item"><span class="label">المادة:</span><span class="value" id="p_subject">---</span></div>
+    <div class="item"><span class="label">الاسم رباعي:</span><span class="value" id="p_name">---</span></div>
+    <div class="item"><span class="label">تاريخ الميلاد:</span><span class="value" id="p_birthDate">---</span></div>
+    <div class="item"><span class="label">الرقم القومي:</span><span class="value" id="p_nationalId">---</span></div>
+    <div class="item"><span class="label">المؤهل الدراسي:</span><span class="value" id="p_qualification">---</span></div>
+    <div class="item"><span class="label">التخصص:</span><span class="value" id="p_specialization">---</span></div>
+    <div class="item"><span class="label">التليفون المحمول:</span><span class="value" id="p_phone">---</span></div>
+    <div class="item" style="grid-column:1/-1;"><span class="label">محل الإقامة:</span><span class="value" id="p_address">---</span></div>
+  </div>
+
+  <!-- حالة الطلب (تظهر فقط إذا كانت موجودة) -->
+  <div id="p_statusContainer" class="status-print" style="display:none;">
+    <span>حالة الطلب: </span><span id="p_status">---</span>
+    <div id="p_rejectionReason" class="rejected" style="display:none; margin-top:5px;"></div>
+  </div>
+
+  <!-- المرفقات -->
+  <div class="attachments-print">
+    <div style="font-weight:700; margin-bottom:5px;">المرفقات:</div>
+    <ul id="p_attachmentsList">
+      <li>لا توجد مرفقات.</li>
+    </ul>
+  </div>
+
+  <!-- التوقيعات -->
+  <div class="signature-area">
+    <div>توقيع مقدم الطلب: ....................</div>
+    <div>التاريخ: ....................</div>
+    <div>ختم المدرسة: ....................</div>
+  </div>
+</div>
+
+<!-- ============================================================= -->
+<!-- 3. جافا سكريبت                                                 -->
+<!-- ============================================================= -->
+<script>
+// ⚠️ استبدل الرابط ده برابط نشر Apps Script بتاعك (ينتهي بـ /exec)
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyQp1VAlUvr_kz6L6UWhhH-EtHUQBxZAfAvHV1GpBB_hYqEe8hN2DC_DAZNZXwFCmeasQ/exec";
+
+const fieldIds = [
+  "subject","name","birthDate","nationalId",
+  "qualification","specialization","phone","address"
+];
+
+let selectedFiles = [];
+let lastQueriedStatus = null; // لحفظ الحالة المسترجعة من الاستعلام
+
+async function callServer(action, payload){
+  if (!WEB_APP_URL || WEB_APP_URL.includes("XXXX")) {
+    throw new Error("لم يتم ضبط رابط الخادم (WEB_APP_URL) بعد.");
+  }
+  const res = await fetch(WEB_APP_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ action, ...payload })
+  });
+  if (!res.ok) throw new Error("تعذر الاتصال بالخادم (خطأ " + res.status + ").");
+  const response = await res.json();
+  if (!response.success) throw new Error(response.message || "حدث خطأ في الخادم.");
+  return response.result;
+}
+
+// ----- إدارة المرفقات -----
+document.getElementById("attachments").addEventListener("change", function(e){
+  const allowed = ["application/pdf","image/jpeg"];
+  const bad = [];
+  [...e.target.files].forEach(file=>{
+    if(!allowed.includes(file.type) && !/\.(pdf|jpe?g)$/i.test(file.name)) bad.push(file.name);
+    else selectedFiles.push(file);
+  });
+  e.target.value = "";
+  renderFiles();
+  if(bad.length) showMessage("تم تجاهل ملفات غير مسموح بها: " + bad.join("، "), true);
+});
+
+function renderFiles(){
+  const list = document.getElementById("filesList");
+  list.innerHTML = "";
+  selectedFiles.forEach((file,index)=>{
+    const li = document.createElement("li");
+    li.innerHTML = `<span>${escapeHtml(file.name)}</span>
+      <button class="remove-file btn-gray" type="button" onclick="removeFile(${index})">حذف</button>`;
+    list.appendChild(li);
+  });
+}
+
+function removeFile(index){
+  selectedFiles.splice(index,1);
+  renderFiles();
+}
+
+// ----- جلب البيانات من النموذج -----
+function getFormData(){
+  const data = {};
+  fieldIds.forEach(id => data[id] = document.getElementById(id).value.trim());
+  return data;
+}
+
+function validate(data){
+  if(!data.name) return "يرجى إدخال الاسم رباعي.";
+  if(!data.birthDate) return "يرجى اختيار تاريخ الميلاد.";
+  if(!data.nationalId) return "يرجى إدخال الرقم القومي.";
+  if(data.nationalId.length !== 14 || !/^\d{14}$/.test(data.nationalId))
+    return "الرقم القومي يجب أن يتكون من 14 رقمًا.";
+  return "";
+}
+
+// ----- حفظ البيانات -----
+async function saveRecord(){
+  const data = getFormData();
+  const error = validate(data);
+  if(error){ showMessage(error,true); return null; }
+
+  showMessage("جاري حفظ البيانات...");
+  try {
+    const attachments = await prepareAttachments();
+    const result = await callServer("save", { data, attachments });
+    showMessage(result.message || "تم حفظ البيانات بنجاح.");
+    return result;
+  } catch(err) {
+    showMessage(err.message || "حدث خطأ أثناء الحفظ.", true);
+    return null;
+  }
+}
+
+async function prepareAttachments(){
+  const allowed = ["application/pdf", "image/jpeg"];
+  const files = [];
+  for (const file of selectedFiles) {
+    if(!allowed.includes(file.type) && !/\.(pdf|jpe?g)$/i.test(file.name)) {
+      throw new Error("المرفق غير مسموح: " + file.name);
+    }
+    const base64 = await fileToBase64(file);
+    files.push({name:file.name, mimeType:file.type || "application/octet-stream", base64});
+  }
+  return files;
+}
+
+function fileToBase64(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("تعذر قراءة الملف: " + file.name));
+    reader.readAsDataURL(file);
+  });
+}
+
+// ----- حفظ وطباعة (يملأ قالب الطباعة ثم يطبع) -----
+async function saveAndPrint(){
+  const result = await saveRecord();
+  if (result) {
+    // 1. نأخذ البيانات الحالية من النموذج
+    const data = getFormData();
+    // 2. نضيف الحالة (إذا كانت موجودة من الاستعلام السابق)
+    if (lastQueriedStatus) {
+      data.status = lastQueriedStatus.status || '';
+      data.rejectionReason = lastQueriedStatus.rejectionReason || '';
+    } else {
+      // إذا لم يكن هناك استعلام، نحاول قراءة الحالة من الـ statusDisplay
+      const statusEl = document.getElementById('statusValue');
+      const reasonEl = document.getElementById('rejectionReasonDisplay');
+      data.status = statusEl.textContent !== '---' ? statusEl.textContent : '';
+      data.rejectionReason = reasonEl.style.display !== 'none' ? reasonEl.textContent.replace('سبب الرفض: ', '') : '';
+    }
+    // 3. نملأ قالب الطباعة
+    fillPrintTemplate(data);
+    // 4. نطبع
+    window.print();
+  }
+}
+
+// ----- ملء قالب الطباعة بالبيانات -----
+function fillPrintTemplate(data) {
+  // الحقول الأساسية
+  document.getElementById('p_subject').textContent = data.subject || '---';
+  document.getElementById('p_name').textContent = data.name || '---';
+  document.getElementById('p_birthDate').textContent = data.birthDate || '---';
+  document.getElementById('p_nationalId').textContent = data.nationalId || '---';
+  document.getElementById('p_qualification').textContent = data.qualification || '---';
+  document.getElementById('p_specialization').textContent = data.specialization || '---';
+  document.getElementById('p_phone').textContent = data.phone || '---';
+  document.getElementById('p_address').textContent = data.address || '---';
+
+  // الحالة وسبب الرفض
+  const statusContainer = document.getElementById('p_statusContainer');
+  const statusSpan = document.getElementById('p_status');
+  const reasonSpan = document.getElementById('p_rejectionReason');
+  
+  if (data.status && data.status.trim() !== '') {
+    statusContainer.style.display = 'block';
+    statusSpan.textContent = data.status;
+    if (data.status.trim().toLowerCase() === 'مرفوض' && data.rejectionReason) {
+      reasonSpan.style.display = 'block';
+      reasonSpan.textContent = 'سبب الرفض: ' + data.rejectionReason;
+    } else {
+      reasonSpan.style.display = 'none';
+    }
+  } else {
+    statusContainer.style.display = 'none';
+  }
+
+  // المرفقات (نعرض أسماء الملفات المختارة حالياً، أو روابط إن وجدت)
+  const list = document.getElementById('p_attachmentsList');
+  list.innerHTML = '';
+  if (selectedFiles.length > 0) {
+    selectedFiles.forEach(file => {
+      const li = document.createElement('li');
+      li.textContent = file.name;
+      list.appendChild(li);
+    });
+  } else {
+    const li = document.createElement('li');
+    li.textContent = 'لا توجد مرفقات مضافة.';
+    list.appendChild(li);
+  }
+}
+
+// ----- الاستعلام (بـ prompt و alert) -----
+async function queryRecord(){
+  const nationalId = prompt("الرجاء إدخال الرقم القومي للاستعلام عن الطلب:", "");
+  if (nationalId === null) return;
+
+  const trimmedId = nationalId.trim();
+  if (!trimmedId) {
+    showMessage("لم تدخل أي رقم. يرجى المحاولة مرة أخرى.", true);
+    return;
+  }
+  if (!/^\d{14}$/.test(trimmedId)) {
+    alert("⚠️ الرقم القومي يجب أن يتكون من 14 رقمًا.");
+    showMessage("الرقم القومي غير صحيح.", true);
+    return;
+  }
+
+  document.getElementById("nationalId").value = trimmedId;
+  showMessage("جاري الاستعلام عن الرقم: " + trimmedId + "...");
+  
+  try {
+    const result = await callServer("query", { nationalId: trimmedId });
+    if (!result || !result.found) {
+      alert("❌ لم يتم العثور على طلب بهذا الرقم القومي.");
+      showMessage(result?.message || "لا توجد بيانات.", true);
+      document.getElementById("statusDisplay").classList.remove("show");
+      lastQueriedStatus = null;
+      return;
+    }
+
+    const record = result.data;
+    // تعبئة الحقول
+    fieldIds.forEach(id=>{
+      if(record[id] !== undefined && record[id] !== null) {
+        document.getElementById(id).value = record[id];
+      }
+    });
+
+    // حفظ الحالة لعرضها في الطباعة
+    lastQueriedStatus = {
+      status: record.status || '',
+      rejectionReason: record.rejectionReason || ''
+    };
+
+    // عرض نافذة منبثقة بالنتيجة
+    let statusMsg = `✅ تم العثور على الطلب.\n\n`;
+    statusMsg += `👤 الاسم: ${record.name || 'غير محدد'}\n`;
+    statusMsg += `🆔 الرقم القومي: ${record.nationalId}\n`;
+    statusMsg += `📋 الحالة: ${record.status || 'لم تحدد بعد'}\n`;
+    if (record.status && record.status.trim().toLowerCase() === "مرفوض" && record.rejectionReason) {
+      statusMsg += `❌ سبب الرفض: ${record.rejectionReason}\n`;
+    }
+    alert(statusMsg);
+
+    // عرض الحالة في واجهة الصفحة
+    const statusDisplay = document.getElementById("statusDisplay");
+    const statusValue = document.getElementById("statusValue");
+    const reasonDisplay = document.getElementById("rejectionReasonDisplay");
+    if (record.status) {
+      statusDisplay.classList.add("show");
+      statusValue.textContent = record.status;
+      if (record.status.trim().toLowerCase() === "مرفوض" && record.rejectionReason) {
+        reasonDisplay.style.display = "block";
+        reasonDisplay.textContent = "سبب الرفض: " + record.rejectionReason;
+      } else {
+        reasonDisplay.style.display = "none";
+      }
+    } else {
+      statusDisplay.classList.remove("show");
+    }
+
+    // تحديث قائمة المرفقات (إذا وجدت روابط)
+    if (record.attachments) {
+      // نعرضها في قائمة الطباعة بشكل مؤقت (اختياري)
+      const printList = document.getElementById('p_attachmentsList');
+      printList.innerHTML = '';
+      const links = record.attachments.split('\n').filter(l=>l.trim());
+      if (links.length) {
+        links.forEach(link=>{
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.href = link;
+          a.textContent = 'رابط المرفق';
+          a.target = '_blank';
+          li.appendChild(a);
+          printList.appendChild(li);
+        });
+      } else {
+        printList.innerHTML = '<li>لا توجد مرفقات.</li>';
+      }
+    }
+
+    showMessage("تم استدعاء البيانات بنجاح.");
+
+  } catch(err) {
+    alert("⚠️ حدث خطأ أثناء الاستعلام: " + (err.message || "خطأ غير معروف"));
+    showMessage(err.message || "حدث خطأ أثناء الاستعلام.", true);
+    lastQueriedStatus = null;
+  }
+}
+
+// ----- مسح النموذج -----
+function clearForm(){
+  fieldIds.forEach(id=> document.getElementById(id).value = "");
+  selectedFiles = [];
+  renderFiles();
+  document.getElementById("statusDisplay").classList.remove("show");
+  lastQueriedStatus = null;
+  showMessage("");
+}
+
+// ----- أدوات مساعدة -----
+function showMessage(text, error=false){
+  const el = document.getElementById("message");
+  el.textContent = text;
+  el.style.color = error ? "#a12622" : "#1261a0";
+}
+
+function escapeHtml(text){
+  return text.replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[c]));
+}
+</script>
+</body>
+</html>
