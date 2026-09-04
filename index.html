@@ -206,9 +206,9 @@
     .print-only .info-grid .item .value { font-weight: 500; }
     .print-only .status-print { margin: 15px 0; padding: 10px; border: 2px solid #1261a0; border-radius: 8px; background: #eef6fc; text-align: center; font-weight: 700; font-size: 14pt; }
     .print-only .status-print .rejected { color: #a12622; }
-    .print-only .attachments-print { margin: 15px 0; padding: 10px; border: 1px solid #aaa; background: #f9f9f9; }
-    .print-only .attachments-print ul { list-style: none; padding: 0; }
-    .print-only .attachments-print ul li { padding: 3px 0; border-bottom: 1px dotted #ccc; }
+    .print-only .attachments-print { margin: 15px 0; padding: 10px; border: 1px solid #aaa; background: #f9f9f9; border-radius: 6px; }
+    .print-only .attachments-print ul { list-style: none; padding: 0; margin: 5px 0 0 0; }
+    .print-only .attachments-print ul li { padding: 3px 0; border-bottom: 1px dotted #ccc; font-size: 12pt; }
     .print-only .signature-area { margin-top: 30px; padding-top: 15px; border-top: 2px solid #333; display: flex; justify-content: space-between; font-size: 14pt; }
     .print-only .signature-area div { display: inline-block; }
   }
@@ -234,19 +234,19 @@
     <div class="title">طلب للعمل بنظام الحصة خلال العام الدراسي 2023/2022م</div>
   </div>
 
-<label for="subject">اسم مادة التدريس:</label>
+  <label for="subject">اسم مادة التدريس:</label>
   <div class="intro">
-   <select  id="subject" style="display:inline-block;width:300px;max-width:100%;vertical-align:middle;">
+    <select id="subject" style="display:inline-block;width:300px;max-width:100%;vertical-align:middle;">
         <option value="">-- اختر المادة --</option>
         <option value="اللغة العربية">اللغة العربية</option>
         <option value="اللغة الإنجليزية">اللغة الإنجليزية</option>
         <option value="الرياضيات">الرياضيات</option>
         <option value="العلوم">العلوم</option>
         <option value="الدراسات الاجتماعية">الدراسات الاجتماعية</option>
-       
     </select>
   </div>
-<label for="subject">بيانات مقدم الطلب:</label>
+
+  <label>بيانات مقدم الطلب:</label>
   <div class="grid">
     <div class="field"><label for="name">الاسم رباعي</label><input id="name" type="text" placeholder="أدخل الاسم رباعي"></div>
     <div class="field"><label for="birthDate">تاريخ الميلاد</label><input id="birthDate" type="date"></div>
@@ -286,7 +286,6 @@
 
 <!-- ============================================================= -->
 <!-- 2. 🖨️ قالب الطباعة (يظهر فقط عند الطباعة)                      -->
-<!--    ✏️ عدل التصميم هنا كما تحب (أضف جداول، صور، توقيعات...) -->
 <!-- ============================================================= -->
 <div class="print-only" id="printOnly">
   
@@ -316,7 +315,13 @@
     <div id="p_rejectionReason" class="rejected" style="display:none; margin-top:5px;"></div>
   </div>
 
- 
+  <!-- المرفقات في الطباعة -->
+  <div class="attachments-print">
+    <strong>الملفات المرفقة:</strong>
+    <ul id="p_attachmentsList">
+      <li>لا توجد مرفقات مضافة.</li>
+    </ul>
+  </div>
 
   <!-- التوقيعات -->
   <div class="signature-area">
@@ -330,8 +335,8 @@
 <!-- 3. جافا سكريبت                                                 -->
 <!-- ============================================================= -->
 <script>
-// ⚠️ استبدل الرابط ده برابط نشر Apps Script بتاعك (ينتهي بـ /exec)
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwqnN6pz5YISvW7RBuXOUq1vA87SjI_NLhpUpDNx5C8yvWv_lYRj_Dul2p2NJQTTsqhew/exec";
+// ⚠️ رابط نشر Apps Script الخاص بك
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyQp1VAlUvr_kz6L6UWhhH-EtHUQBxZAfAvHV1GpBB_hYqEe8hN2DC_DAZNZXwFCmeasQ/exec";
 
 const fieldIds = [
   "subject","name","birthDate","nationalId",
@@ -339,7 +344,7 @@ const fieldIds = [
 ];
 
 let selectedFiles = [];
-let lastQueriedStatus = null; // لحفظ الحالة المسترجعة من الاستعلام
+let lastQueriedStatus = null;
 
 async function callServer(action, payload){
   if (!WEB_APP_URL || WEB_APP_URL.includes("XXXX")) {
@@ -445,29 +450,23 @@ function fileToBase64(file){
 async function saveAndPrint(){
   const result = await saveRecord();
   if (result) {
-    // 1. نأخذ البيانات الحالية من النموذج
     const data = getFormData();
-    // 2. نضيف الحالة (إذا كانت موجودة من الاستعلام السابق)
     if (lastQueriedStatus) {
       data.status = lastQueriedStatus.status || '';
       data.rejectionReason = lastQueriedStatus.rejectionReason || '';
     } else {
-      // إذا لم يكن هناك استعلام، نحاول قراءة الحالة من الـ statusDisplay
       const statusEl = document.getElementById('statusValue');
       const reasonEl = document.getElementById('rejectionReasonDisplay');
       data.status = statusEl.textContent !== '---' ? statusEl.textContent : '';
       data.rejectionReason = reasonEl.style.display !== 'none' ? reasonEl.textContent.replace('سبب الرفض: ', '') : '';
     }
-    // 3. نملأ قالب الطباعة
     fillPrintTemplate(data);
-    // 4. نطبع
     window.print();
   }
 }
 
 // ----- ملء قالب الطباعة بالبيانات -----
 function fillPrintTemplate(data) {
-  // الحقول الأساسية
   document.getElementById('p_subject').textContent = data.subject || '---';
   document.getElementById('p_name').textContent = data.name || '---';
   document.getElementById('p_birthDate').textContent = data.birthDate || '---';
@@ -477,7 +476,6 @@ function fillPrintTemplate(data) {
   document.getElementById('p_phone').textContent = data.phone || '---';
   document.getElementById('p_address').textContent = data.address || '---';
 
-  // الحالة وسبب الرفض
   const statusContainer = document.getElementById('p_statusContainer');
   const statusSpan = document.getElementById('p_status');
   const reasonSpan = document.getElementById('p_rejectionReason');
@@ -495,9 +493,24 @@ function fillPrintTemplate(data) {
     statusContainer.style.display = 'none';
   }
 
- 
+  const list = document.getElementById('p_attachmentsList');
+  if (list) {
+    list.innerHTML = '';
+    if (selectedFiles.length > 0) {
+      selectedFiles.forEach(file => {
+        const li = document.createElement('li');
+        li.textContent = file.name;
+        list.appendChild(li);
+      });
+    } else {
+      const li = document.createElement('li');
+      li.textContent = 'لا توجد مرفقات مضافة.';
+      list.appendChild(li);
+    }
+  }
+}
 
-// ----- الاستعلام (بـ prompt و alert) -----
+// ----- الاستعلام -----
 async function queryRecord(){
   const nationalId = prompt("الرجاء إدخال الرقم القومي للاستعلام عن الطلب:", "");
   if (nationalId === null) return;
@@ -527,20 +540,17 @@ async function queryRecord(){
     }
 
     const record = result.data;
-    // تعبئة الحقول
     fieldIds.forEach(id=>{
       if(record[id] !== undefined && record[id] !== null) {
         document.getElementById(id).value = record[id];
       }
     });
 
-    // حفظ الحالة لعرضها في الطباعة
     lastQueriedStatus = {
       status: record.status || '',
       rejectionReason: record.rejectionReason || ''
     };
 
-    // عرض نافذة منبثقة بالنتيجة
     let statusMsg = `✅ تم العثور على الطلب.\n\n`;
     statusMsg += `👤 الاسم: ${record.name || 'غير محدد'}\n`;
     statusMsg += `🆔 الرقم القومي: ${record.nationalId}\n`;
@@ -550,7 +560,6 @@ async function queryRecord(){
     }
     alert(statusMsg);
 
-    // عرض الحالة في واجهة الصفحة
     const statusDisplay = document.getElementById("statusDisplay");
     const statusValue = document.getElementById("statusValue");
     const reasonDisplay = document.getElementById("rejectionReasonDisplay");
@@ -567,24 +576,24 @@ async function queryRecord(){
       statusDisplay.classList.remove("show");
     }
 
-    // تحديث قائمة المرفقات (إذا وجدت روابط)
     if (record.attachments) {
-      // نعرضها في قائمة الطباعة بشكل مؤقت (اختياري)
       const printList = document.getElementById('p_attachmentsList');
-      printList.innerHTML = '';
-      const links = record.attachments.split('\n').filter(l=>l.trim());
-      if (links.length) {
-        links.forEach(link=>{
-          const li = document.createElement('li');
-          const a = document.createElement('a');
-          a.href = link;
-          a.textContent = 'رابط المرفق';
-          a.target = '_blank';
-          li.appendChild(a);
-          printList.appendChild(li);
-        });
-      } else {
-        printList.innerHTML = '<li>لا توجد مرفقات.</li>';
+      if (printList) {
+        printList.innerHTML = '';
+        const links = record.attachments.split('\n').filter(l=>l.trim());
+        if (links.length) {
+          links.forEach(link=>{
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = link;
+            a.textContent = 'رابط المرفق';
+            a.target = '_blank';
+            li.appendChild(a);
+            printList.appendChild(li);
+          });
+        } else {
+          printList.innerHTML = '<li>لا توجد مرفقات.</li>';
+        }
       }
     }
 
