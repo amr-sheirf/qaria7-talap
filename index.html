@@ -204,12 +204,7 @@
     .print-only .info-grid .item { display: flex; align-items: baseline; padding: 4px 0; border-bottom: 1px dotted #ddd; }
     .print-only .info-grid .item .label { font-weight: 700; min-width: 100px; color: #0b4678; }
     .print-only .info-grid .item .value { font-weight: 500; }
-    .print-only .status-print { margin: 15px 0; padding: 10px; border: 2px solid #1261a0; border-radius: 8px; background: #eef6fc; text-align: center; font-weight: 700; font-size: 14pt; }
-    .print-only .status-print .rejected { color: #a12622; }
-    .print-only .attachments-print { margin: 15px 0; padding: 10px; border: 1px solid #aaa; background: #f9f9f9; border-radius: 6px; }
-    .print-only .attachments-print ul { list-style: none; padding: 0; margin: 5px 0 0 0; }
-    .print-only .attachments-print ul li { padding: 3px 0; border-bottom: 1px dotted #ccc; font-size: 12pt; }
-    .print-only .signature-area { margin-top: 30px; padding-top: 15px; border-top: 2px solid #333; display: flex; justify-content: space-between; font-size: 14pt; }
+    .print-only .signature-area { margin-top: 40px; padding-top: 15px; border-top: 2px solid #333; display: flex; justify-content: space-between; font-size: 14pt; }
     .print-only .signature-area div { display: inline-block; }
   }
 
@@ -257,7 +252,7 @@
     <div class="field full"><label for="address">محل الإقامة تفصيليًا</label><textarea id="address" placeholder="اكتب محل الإقامة بالتفصيل"></textarea></div>
   </div>
 
-  <!-- عرض حالة الطلب (تظهر بعد الاستعلام) -->
+  <!-- عرض حالة الطلب (تظهر بعد الاستعلام في الشاشة فقط) -->
   <div id="statusDisplay" class="status-display">
     <div class="status-box">
       <span class="status-label">حالة الطلب:</span>
@@ -285,7 +280,7 @@
 </div>
 
 <!-- ============================================================= -->
-<!-- 2. 🖨️ قالب الطباعة (يظهر فقط عند الطباعة)                      -->
+<!-- 2. 🖨️ قالب الطباعة (يظهر فقط عند الطباعة - بدون حالة أو مرفقات) -->
 <!-- ============================================================= -->
 <div class="print-only" id="printOnly">
   
@@ -307,20 +302,6 @@
     <div class="item"><span class="label">التخصص:</span><span class="value" id="p_specialization">---</span></div>
     <div class="item"><span class="label">التليفون المحمول:</span><span class="value" id="p_phone">---</span></div>
     <div class="item" style="grid-column:1/-1;"><span class="label">محل الإقامة:</span><span class="value" id="p_address">---</span></div>
-  </div>
-
-  <!-- حالة الطلب (تظهر فقط إذا كانت موجودة) -->
-  <div id="p_statusContainer" class="status-print" style="display:none;">
-    <span>حالة الطلب: </span><span id="p_status">---</span>
-    <div id="p_rejectionReason" class="rejected" style="display:none; margin-top:5px;"></div>
-  </div>
-
-  <!-- المرفقات في الطباعة -->
-  <div class="attachments-print">
-    <strong>الملفات المرفقة:</strong>
-    <ul id="p_attachmentsList">
-      <li>لا توجد مرفقات مضافة.</li>
-    </ul>
   </div>
 
   <!-- التوقيعات -->
@@ -451,21 +432,12 @@ async function saveAndPrint(){
   const result = await saveRecord();
   if (result) {
     const data = getFormData();
-    if (lastQueriedStatus) {
-      data.status = lastQueriedStatus.status || '';
-      data.rejectionReason = lastQueriedStatus.rejectionReason || '';
-    } else {
-      const statusEl = document.getElementById('statusValue');
-      const reasonEl = document.getElementById('rejectionReasonDisplay');
-      data.status = statusEl.textContent !== '---' ? statusEl.textContent : '';
-      data.rejectionReason = reasonEl.style.display !== 'none' ? reasonEl.textContent.replace('سبب الرفض: ', '') : '';
-    }
     fillPrintTemplate(data);
     window.print();
   }
 }
 
-// ----- ملء قالب الطباعة بالبيانات -----
+// ----- ملء قالب الطباعة بالبيانات الأساسية فقط -----
 function fillPrintTemplate(data) {
   document.getElementById('p_subject').textContent = data.subject || '---';
   document.getElementById('p_name').textContent = data.name || '---';
@@ -475,39 +447,6 @@ function fillPrintTemplate(data) {
   document.getElementById('p_specialization').textContent = data.specialization || '---';
   document.getElementById('p_phone').textContent = data.phone || '---';
   document.getElementById('p_address').textContent = data.address || '---';
-
-  const statusContainer = document.getElementById('p_statusContainer');
-  const statusSpan = document.getElementById('p_status');
-  const reasonSpan = document.getElementById('p_rejectionReason');
-  
-  if (data.status && data.status.trim() !== '') {
-    statusContainer.style.display = 'block';
-    statusSpan.textContent = data.status;
-    if (data.status.trim().toLowerCase() === 'مرفوض' && data.rejectionReason) {
-      reasonSpan.style.display = 'block';
-      reasonSpan.textContent = 'سبب الرفض: ' + data.rejectionReason;
-    } else {
-      reasonSpan.style.display = 'none';
-    }
-  } else {
-    statusContainer.style.display = 'none';
-  }
-
-  const list = document.getElementById('p_attachmentsList');
-  if (list) {
-    list.innerHTML = '';
-    if (selectedFiles.length > 0) {
-      selectedFiles.forEach(file => {
-        const li = document.createElement('li');
-        li.textContent = file.name;
-        list.appendChild(li);
-      });
-    } else {
-      const li = document.createElement('li');
-      li.textContent = 'لا توجد مرفقات مضافة.';
-      list.appendChild(li);
-    }
-  }
 }
 
 // ----- الاستعلام -----
@@ -546,11 +485,6 @@ async function queryRecord(){
       }
     });
 
-    lastQueriedStatus = {
-      status: record.status || '',
-      rejectionReason: record.rejectionReason || ''
-    };
-
     let statusMsg = `✅ تم العثور على الطلب.\n\n`;
     statusMsg += `👤 الاسم: ${record.name || 'غير محدد'}\n`;
     statusMsg += `🆔 الرقم القومي: ${record.nationalId}\n`;
@@ -576,33 +510,11 @@ async function queryRecord(){
       statusDisplay.classList.remove("show");
     }
 
-    if (record.attachments) {
-      const printList = document.getElementById('p_attachmentsList');
-      if (printList) {
-        printList.innerHTML = '';
-        const links = record.attachments.split('\n').filter(l=>l.trim());
-        if (links.length) {
-          links.forEach(link=>{
-            const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.href = link;
-            a.textContent = 'رابط المرفق';
-            a.target = '_blank';
-            li.appendChild(a);
-            printList.appendChild(li);
-          });
-        } else {
-          printList.innerHTML = '<li>لا توجد مرفقات.</li>';
-        }
-      }
-    }
-
     showMessage("تم استدعاء البيانات بنجاح.");
 
   } catch(err) {
     alert("⚠️ حدث خطأ أثناء الاستعلام: " + (err.message || "خطأ غير معروف"));
     showMessage(err.message || "حدث خطأ أثناء الاستعلام.", true);
-    lastQueriedStatus = null;
   }
 }
 
@@ -612,7 +524,6 @@ function clearForm(){
   selectedFiles = [];
   renderFiles();
   document.getElementById("statusDisplay").classList.remove("show");
-  lastQueriedStatus = null;
   showMessage("");
 }
 
