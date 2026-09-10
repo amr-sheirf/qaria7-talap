@@ -326,33 +326,24 @@ tbody tr:nth-child(even){background:#f7f9fc}
         </div>
 
         <div class="field">
-          <label for="qualification"><svg><use href="#i-cap"/></svg>المؤهل الدراسي</label>
-          <div class="control">
-            <select id="qualification" data-validate="qualification">
-              <option value="" disabled selected>اختر المؤهل...</option>
-              <option>دبلوم متوسط</option>
-              <option>دبلوم صناعي 3 سنوات</option>
-              <option>دبلوم صناعي 5 سنوات</option>
-              <option>بكالوريوس / ليسانس</option>
-              <option>دبلوم عام</option>
-              <option>دراسات عليا</option>
-            </select>
-          </div>
+  <label for="qualification"><svg><use href="#i-cap"/></svg>المؤهل الدراسي</label>
+  <div class="control">
+    <input id="qualification" data-validate="qualification" type="text" placeholder="اكتب المؤهل الدراسي">
+    <span class="vmark"><svg><use href="#i-v"/></svg></span>
+  </div>
+  <small class="msg"></small>
+</div>
           <small class="msg"></small>
         </div>
 
         <div class="field">
-          <label for="specialty"><svg><use href="#i-book"/></svg>التخصص</label>
-          <div class="control">
-            <input id="specialty" data-validate="specialty" type="text" list="specialties" placeholder="مثال: رياضيات">
-            <datalist id="specialties">
-              <option value="لغة عربية"><option value="لغة إنجليزية"><option value="رياضيات">
-              <option value="علوم"><option value="دراسات اجتماعية"><option value="تربية دينية">
-              <option value="حاسب آلي"><option value="تربية فنية"><option value="تربية رياضية">
-              <option value="تربية موسيقية"><option value="أنشطة"
-            </datalist>
-            <span class="vmark"><svg><use href="#i-v"/></svg></span>
-          </div>
+  <label for="specialty"><svg><use href="#i-book"/></svg>التخصص</label>
+  <div class="control">
+    <input id="specialty" data-validate="specialty" type="text" placeholder="مثال: رياضيات">
+    <span class="vmark"><svg><use href="#i-v"/></svg></span>
+  </div>
+  <small class="msg"></small>
+</div>
           <small class="msg"></small>
         </div>
 
@@ -511,7 +502,7 @@ tbody tr:nth-child(even){background:#f7f9fc}
    ACCESS_KEY : مفتاح سري يطابق الموجود في Code.gs (اختياري)
    ═══════════════════════════════════════════════════════════ */
 const CONFIG = {
-  GAS_URL: 'https://script.google.com/macros/s/AKfycbyK5QMJYNFT8dG9Lh0aVjE_kc-Jiu8F1QDwMEO8o1CASR3yG4H481F19TFL68s2-7cg/exec',
+  GAS_URL: 'https://script.google.com/macros/s/AKfycbw60CBqGNN6GSQ0FD3rpb1LaKRE3RfF9_mUkDvnlovwq_8h8o2Aqw9wTeuqwbKb6jDT/exec',
   ACCESS_KEY: '0100'
 };
 
