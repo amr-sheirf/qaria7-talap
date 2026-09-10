@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>طلب تقديم للعمل معلّم حصة — مدرسة قرية 7 الابتدائية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0d2a52; --navy-d:#091d3a; --navy-l:#16407c;
+  --gold:#c9a24b; --gold-d:#8a6a24;
+  --ink:#22313f; --mut:#64748b;
+  --line:#d8dfea; --bg:#eef1f6;
+  --ok:#177a45; --ok-bg:#e8f5ee;
+  --err:#bf3b30; --err-bg:#fdeeec;
+  --rad:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.7}
+svg{display:inline-block;vertical-align:middle;flex:none}
+
+/* ===== البنر الحكومي ===== */
+.topline{height:5px;background:var(--gold)}
+.banner{background:var(--navy);color:#fff;position:relative;overflow:hidden}
+.banner::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(45deg,rgba(255,255,255,.035) 0 2px,transparent 2px 16px)}
+.banner::after{content:'';position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--gold)}
+.banner-inner{max-width:980px;margin:auto;padding:26px 20px 32px;display:flex;gap:20px;align-items:center;position:relative;z-index:1}
+.emblem{width:78px;height:78px;border:2px solid rgba(201,162,75,.85);border-radius:50%;
+  display:grid;place-items:center;background:rgba(255,255,255,.05)}
+.gov-line{font-size:12.5px;color:#c6d2e6;font-weight:600;letter-spacing:.3px}
+.titles h1{font-size:clamp(21px,3.4vw,30px);font-weight:900;margin:2px 0;line-height:1.35}
+.titles .sub{color:var(--gold);font-weight:700;font-size:15px}
+.banner-side{margin-inline-start:auto;text-align:center;color:#c6d2e6;font-size:12.5px;
+  display:flex;flex-direction:column;gap:4px;border-inline-start:1px solid rgba(255,255,255,.18);padding-inline-start:20px}
+.banner-side b{color:#fff;font-size:13px}
+@media(max-width:700px){.banner-side{display:none}.emblem{width:62px;height:62px}}
+
+/* ===== البطاقة ===== */
+main{max-width:980px;margin:-26px auto 44px;padding:0 16px;position:relative;z-index:2}
+.card{background:#fff;border-radius:var(--rad);border:1px solid #e3e8f0;
+  box-shadow:0 12px 34px rgba(13,42,82,.12);overflow:hidden;animation:rise .5s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+.card-head{padding:20px 26px 16px;border-bottom:1px solid var(--line);background:#f8fafd}
+.card-head h2{font-size:18px;font-weight:800;color:var(--navy)}
+.card-head::after{content:'';display:block;width:46px;height:3px;background:var(--gold);border-radius:2px;margin-top:8px}
+.card-head p{color:var(--mut);font-size:13px;margin-top:8px}
+
+.success{margin:18px 26px 0;display:flex;gap:11px;align-items:flex-start;
+  background:var(--ok-bg);border:1.4px solid #bfe0cd;border-radius:9px;padding:13px 16px;color:#14532d;font-size:14px}
+.success svg{width:21px;height:21px;color:var(--ok);margin-top:3px}
+.success small{color:#3f6b52}
+
+/* ===== الشبكة والحقول ===== */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px 22px;padding:24px 26px 10px}
+.span-2{grid-column:span 2}
+.span-3{grid-column:1/-1}
+@media(max-width:820px){.grid{grid-template-columns:1fr 1fr}.span-2{grid-column:1/-1}}
+@media(max-width:540px){.grid{grid-template-columns:1fr}.span-2,.derived{grid-column:1/-1}.derived{grid-template-columns:1fr !important}}
+
+.field{display:flex;flex-direction:column;gap:7px;min-width:0}
+.field>label{font-size:13.5px;font-weight:700;color:#33465c;display:flex;align-items:center;gap:6px}
+.field>label svg{width:15px;height:15px;color:#7a8aa0}
+.control{position:relative}
+input,select{width:100%;font-family:inherit;font-size:14.5px;padding:10px 13px;border:1.6px solid var(--line);
+  border-radius:8px;background:#fff;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s,background .2s}
+input:focus,select:focus{border-color:var(--navy-l);box-shadow:0 0 0 3px rgba(22,64,124,.13)}
+.field.valid input{border-color:var(--ok)}
+.field.invalid input{border-color:var(--err);background:#fffafa}
+.msg{font-size:12px;color:var(--err);min-height:17px;line-height:1.4}
+.vmark{position:absolute;inset-inline-end:11px;top:12px;color:var(--ok);opacity:0;transition:.2s;pointer-events:none}
+.vmark svg{width:17px;height:17px}
+.field.valid .vmark{opacity:1}
+
+/* بطاقات البيانات المستخرجة من الرقم القومي */
+.derived{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.d-card{display:flex;gap:12px;align-items:center;border:1.6px dashed var(--line);border-radius:9px;
+  padding:12px 14px;background:#f8fafd;opacity:.55;transition:.35s}
+.d-card svg{width:26px;height:26px;color:var(--navy-l)}
+.d-card span{display:block;font-size:11.5px;color:var(--mut);font-weight:600}
+.d-card b{font-size:15px}
+.derived.done .d-card{opacity:1;border-style:solid;border-color:#bfe0cd;background:var(--ok-bg);animation:pop .45s cubic-bezier(.2,.9,.3,1.35)}
+.derived.err .d-card{opacity:1;border-style:solid;border-color:#eec7c3;background:var(--err-bg)}
+@keyframes pop{from{transform:translateY(6px) scale(.97);opacity:0}}
+
+/* أزرار نعم / لا */
+.seg{display:flex;border:1.6px solid var(--line);border-radius:8px;overflow:hidden;width:max-content}
+.seg label{position:relative}
+.seg input{position:absolute;opacity:0;pointer-events:none;width:0;height:0;border:0;padding:0}
+.seg span{display:block;padding:9px 34px;min-width:104px;text-align:center;background:#fff;color:var(--mut);
+  font-weight:700;font-size:14px;cursor:pointer;user-select:none;transition:.2s}
+.seg label+label span{border-inline-start:1.6px solid var(--line)}
+.seg input:checked+span{background:var(--navy);color:#fff}
+.seg input:focus-visible+span{box-shadow:inset 0 0 0 2.5px var(--gold)}
+
+.reveal{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.reveal.open{max-height:150px}
+
+/* ===== الأزرار ===== */
+.actions{display:flex;gap:12px;flex-wrap:wrap;padding:20px 26px 26px;margin-top:10px;
+  border-top:1px dashed var(--line);background:#fbfcfe}
+.btn{display:inline-flex;align-items:center;gap:9px;font-family:inherit;font-size:14.5px;font-weight:700;
+  padding:11px 22px;border-radius:8px;cursor:pointer;transition:.2s;border:1.6px solid transparent;background:#fff}
+.btn svg{width:17px;height:17px}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:none}
+.btn:disabled{opacity:.65;cursor:not-allowed;transform:none}
+.btn-primary{background:var(--navy);color:#fff;box-shadow:0 4px 12px rgba(13,42,82,.28)}
+.btn-primary:hover{background:var(--navy-d)}
+.btn-outline{color:var(--navy);border-color:var(--navy-l)}
+.btn-outline:hover{background:#eef3fa}
+.btn-gold{color:var(--gold-d);border-color:var(--gold)}
+.btn-gold:hover{background:#fdf8ec}
+.sp{width:16px;height:16px;border:2.4px solid rgba(13,42,82,.25);border-top-color:var(--navy);border-radius:50%;
+  display:none;animation:rot .7s linear infinite}
+.btn-primary .sp{border-color:rgba(255,255,255,.35);border-top-color:#fff}
+.btn.busy .sp{display:inline-block}
+.btn.busy .ic{display:none}
+@keyframes rot{to{transform:rotate(360deg)}}
+.btn.pulse{animation:pulse 1.6s ease infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(23,122,69,.45)}55%{box-shadow:0 0 0 9px rgba(23,122,69,0)}}
+
+.sign-row{display:none;margin:30px 26px 26px;justify-content:space-between;gap:30px;font-weight:700;font-size:14px;flex-wrap:wrap}
+.sign-row .u{display:inline-block;min-width:190px;border-bottom:1.6px dotted #444;margin-inline-start:8px}
+
+.foot{text-align:center;color:var(--mut);font-size:12.5px;margin-top:18px}
+
+/* ===== نافذة الاستعلام ===== */
+.modal{position:fixed;inset:0;background:rgba(9,29,58,.6);backdrop-filter:blur(3px);display:grid;place-items:center;
+  padding:18px;z-index:50;opacity:0;visibility:hidden;transition:.25s}
+.modal.open{opacity:1;visibility:visible}
+.modal-card{background:#fff;border-radius:12px;width:min(940px,96vw);max-height:88vh;display:flex;flex-direction:column;
+  transform:translateY(14px);transition:.25s;box-shadow:0 30px 70px rgba(0,0,0,.35)}
+.modal.open .modal-card{transform:none}
+.modal-head{display:flex;align-items:center;gap:10px;padding:15px 22px;border-bottom:1px solid var(--line)}
+.modal-head .hicon{width:19px;height:19px;color:var(--gold-d)}
+.modal-head h3{font-size:16.5px;font-weight:800;color:var(--navy)}
+.modal-head .x{margin-inline-start:auto;background:none;border:0;cursor:pointer;color:var(--mut);
+  width:34px;height:34px;border-radius:8px;display:grid;place-items:center}
+.modal-head .x svg{width:18px;height:18px}
+.modal-head .x:hover{background:#f1f4f9;color:var(--err)}
+.modal-body{padding:20px 22px;overflow:auto}
+.q-row{display:flex;gap:10px;flex-wrap:wrap}
+.q-row .control{flex:1;min-width:230px}
+#qMsg{display:block;min-height:0;margin-top:4px}
+.tbl-wrap{margin-top:16px;border:1px solid var(--line);border-radius:9px;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:780px}
+thead th{background:var(--navy);color:#fff;font-weight:700;padding:10px 12px;text-align:right;white-space:nowrap;font-size:12.5px}
+tbody td{padding:9px 12px;border-top:1px solid #e8edf4;white-space:nowrap}
+tbody tr:nth-child(even){background:#f7f9fc}
+.empty{padding:34px 16px;text-align:center;color:var(--mut)}
+.empty svg{width:30px;height:30px;color:#a8b6c8;display:block;margin:0 auto 10px}
+.count{margin-top:12px;font-size:13px;color:var(--mut)}
+.spin2{display:inline-block;width:26px;height:26px;border:3px solid var(--line);border-top-color:var(--navy);
+  border-radius:50%;animation:rot .8s linear infinite;margin-bottom:10px}
+
+/* ===== التوست ===== */
+#toastBox{position:fixed;bottom:26px;right:0;left:0;display:flex;flex-direction:column;align-items:center;
+  gap:10px;z-index:60;pointer-events:none}
+.toast{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);
+  border-inline-start:5px solid var(--ok);border-radius:9px;padding:12px 18px;font-weight:600;font-size:14px;
+  box-shadow:0 12px 30px rgba(9,29,58,.2);max-width:92vw;animation:tin .35s cubic-bezier(.2,.9,.3,1.3)}
+.toast svg{width:19px;height:19px;color:var(--ok)}
+.toast.error{border-inline-start-color:var(--err)} .toast.error svg{color:var(--err)}
+.toast.info{border-inline-start-color:var(--gold)} .toast.info svg{color:var(--gold-d)}
+.toast.out{animation:tout .3s forwards}
+@keyframes tin{from{transform:translateY(16px);opacity:0}}
+@keyframes tout{to{transform:translateY(10px);opacity:0}}
+
+@page{size:A4;margin:12mm}
+@media print{
+  body{background:#fff}
+  .no-print,#toastBox,.modal,.topline{display:none !important}
+  main{margin:0;max-width:100%;padding:0}
+  .card{box-shadow:none;border:1px solid #9fb0c6;border-radius:0;animation:none}
+  .card-head{background:#fff}
+  .banner{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .seg span{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .sign-row{display:flex}
+}
+</style>
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  <symbol id="i-id" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="11" r="2"/><path d="M13 9h5M13 13h5M5.5 17.5h13"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+  <symbol id="i-brief" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></symbol>
+  <symbol id="i-print" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+  <symbol id="i-v" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+</svg>
+
+<div class="topline"></div>
+
+<header class="banner">
+  <div class="banner-inner">
+    <div class="emblem">
+      <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="#c9a24b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 7c-1.9-1.5-4.8-2.1-8-2.1v12.8c3.2 0 6.1.6 8 2.1 1.9-1.5 4.8-2.1 8-2.1V4.9c-3.2 0-6.1.6-8 2.1z"/>
+        <path d="M12 7v12.8M9.2 2.4 12 1l2.8 1.4"/>
+      </svg>
+    </div>
+    <div class="titles">
+      <p class="gov-line">جمهورية مصر العربية &middot; وزارة التربية والتعليم والتعليم الفني</p>
+      <h1>طلب تقديم للعمل معلّم حصة</h1>
+      <p class="sub">مقدَّم لمدرسة قرية 7 الابتدائية</p>
+    </div>
+    <div class="banner-side">
+      <b id="todayDate">—</b>
+      <span>نموذج رسمي معتمد · تقديم إلكتروني</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="card">
+    <div class="card-head">
+      <h2>بيانات مقدّم الطلب</h2>
+      <p>يتم استخراج تاريخ الميلاد والنوع ومحافظة الميلاد تلقائيًا من الرقم القومي — جميع الحقول إلزامية</p>
+    </div>
+
+    <div class="success" id="successBar" hidden>
+      <svg><use href="#i-check"/></svg>
+      <div>
+        تم استلام طلبك بنجاح وحفظه في قاعدة البيانات — <b>رقم الطلب: <span id="savedId"></span></b><br>
+        <small>يُرجى طباعة نسخة من الطلب والاحتفاظ بها للمراجعة.</small>
+      </div>
+    </div>
+
+    <form id="appForm" novalidate autocomplete="off">
+      <div class="grid">
+
+        <div class="field span-2">
+          <label for="fullName"><svg><use href="#i-user"/></svg>الاسم الرباعي</label>
+          <div class="control">
+            <input id="fullName" data-validate="fullName" type="text" placeholder="كما هو مثبَّت في بطاقة الرقم القومي">
+            <span class="vmark"><svg><use href="#i-v"/></svg></span>
+          </div>
+          <small class="msg"></small>
+        </div>
+
+        <div class="field">
+          <label for="nationalId"><svg><use href="#i-id"/></svg>الرقم القومي</label>
+          <div class="control">
+            <input id="nationalId" data-validate="nationalId" type="text" inputmode="numeric" maxlength="14" placeholder="14 رقمًا">
+            <span class="vmark"><svg><use href="#i-v"/></svg></span>
+          </div>
+          <small class="msg"></small>
+        </div>
+
+        <div class="derived span-3" id="derived">
+          <div class="d-card"><svg><use href="#i-cal"/></svg><div><span>تاريخ الميلاد</span><b id="dBirth">—</b></div></div>
+          <div class="d-card"><svg><use href="#i-user"/></svg><div><span>النوع</span><b id="dGender">—</b></div></div>
+          <div class="d-card"><svg><use href="#i-pin"/></svg><div><span>محافظة الميلاد</span><b id="dGov">—</b></div></div>
+        </div>
+
+        <div class="field">
+          <label for="phone"><svg><use href="#i-phone"/></svg>رقم التليفون</label>
+          <div class="control">
+            <input id="phone" data-validate="phone" type="text" inputmode="numeric" maxlength="11" placeholder="01xxxxxxxxx">
+            <span class="vmark"><svg><use href="#i-v"/></svg></span>
+          </div>
+          <small class="msg"></small>
+        </div>
+
+        <div class="field">
+          <label for="qualification"><svg><use href="#i-cap"/></svg>المؤهل الدراسي</label>
+          <div class="control">
+            <select id="qualification" data-validate="qualification">
+              <option value="" disabled selected>اختر المؤهل...</option>
+              <option>دبلوم متوسط</option>
+              <option>دبلوم صناعي 3 سنوات</option>
+              <option>دبلوم صناعي 5 سنوات</option>
+              <option>بكالوريوس / ليسانس</option>
+              <option>دبلوم عام</option>
+              <option>دراسات عليا</option>
+            </select>
+          </div>
+          <small class="msg"></small>
+        </div>
+
+        <div class="field">
+          <label for="specialty"><svg><use href="#i-book"/></svg>التخصص</label>
+          <div class="control">
+            <input id="specialty" data-validate="specialty" type="text" list="specialties" placeholder="مثال: رياضيات">
+            <datalist id="specialties">
+              <option value="لغة عربية"><option value="لغة إنجليزية"><option value="رياضيات">
+              <option value="علوم"><option value="دراسات اجتماعية"><option value="تربية دينية">
+              <option value="حاسب آلي"><option value="تربية فنية"><option value="تربية رياضية">
+              <option value="تربية موسيقية"><option value="أنشطة"
+            </datalist>
+            <span class="vmark"><svg><use href="#i-v"/></svg></span>
+          </div>
+          <small class="msg"></small>
+        </div>
+
+        <div class="field span-3">
+          <label for="address"><svg><use href="#i-home"/></svg>العنوان</label>
+          <div class="control">
+            <input id="address" data-validate="address" type="text" placeholder="القرية / المدينة — المركز — المحافظة">
+            <span class="vmark"><svg><use href="#i-v"/></svg></span>
+          </div>
+          <small class="msg"></small>
+        </div>
+
+        <div class="field span-3">
+          <label><svg><use href="#i-brief"/></svg>هل سبق لك العمل بالمدارس؟</label>
+          <div class="seg" role="radiogroup" aria-label="هل سبق العمل بالمدارس">
+            <label><input type="radio" name="workedBefore" id="wbYes" value="نعم"><span>نعم</span></label>
+            <label><input type="radio" name="workedBefore" id="wbNo" value="لا"><span>لا</span></label>
+          </div>
+          <small class="msg" id="wbMsg"></small>
+        </div>
+
+        <div class="reveal span-3" id="schoolReveal">
+          <div class="field">
+            <label for="schoolName"><svg><use href="#i-cap"/></svg>اسم المدرسة التي عمل بها سابقًا</label>
+            <div class="control">
+              <input id="schoolName" type="text" placeholder="اسم المدرسة / المدارس — افصل بينها بفاصلة">
+              <span class="vmark"><svg><use href="#i-v"/></svg></span>
+            </div>
+            <small class="msg"></small>
+          </div>
+        </div>
+
+      </div>
+    </form>
+
+    <div class="actions no-print">
+      <button type="button" class="btn btn-primary" id="saveBtn">
+        <span class="sp"></span>
+        <svg class="ic"><use href="#i-save"/></svg><span class="lbl">حفظ الطلب</span>
+      </button>
+      <button type="button" class="btn btn-outline" id="printBtn">
+        <svg><use href="#i-print"/></svg><span class="lbl">طباعة النموذج</span>
+      </button>
+      <button type="button" class="btn btn-gold" id="queryBtn">
+        <svg><use href="#i-search"/></svg><span class="lbl">استعلام برقم قومي</span>
+      </button>
+    </div>
+
+    <div class="sign-row">
+      <div>توقيع مقدّم الطلب<span class="u"></span></div>
+      <div>تاريخ التقديم<span class="u" id="printDate"></span></div>
+    </div>
+  </section>
+
+  <p class="foot">مدرسة قرية 7 الابتدائية — جميع البيانات تُحفظ بسرّية وتُستخدم لأغراض التقديم فقط.</p>
+</main>
+
+<div class="modal" id="queryModal" role="dialog" aria-modal="true">
+  <div class="modal-card">
+    <div class="modal-head">
+      <svg class="hicon"><use href="#i-search"/></svg>
+      <h3>استعلام عن طلب مقدَّم</h3>
+      <button class="x" id="qClose" aria-label="إغلاق"><svg><use href="#i-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="q-row">
+        <div class="control"><input id="qNid" inputmode="numeric" maxlength="14" placeholder="أدخل الرقم القومي (14 رقمًا)"></div>
+        <button class="btn btn-primary" id="qRun">
+          <span class="sp"></span>
+          <svg class="ic"><use href="#i-search"/></svg><span class="lbl">بحث</span>
+        </button>
+      </div>
+      <small class="msg" id="qMsg"></small>
+      <div id="qResult">
+        <div class="empty">اكتب الرقم القومي ثم اضغط «بحث» لعرض جميع الطلبات المسجَّلة بهذا الرقم.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toastBox"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ═══════════════════════════════════════════════════════════
+   ★★★ الإعدادات — الخطوة الوحيدة المطلوبة منك ★★★
+   1) انشر Code.gs كتطبيق ويب (Web App) وضع الرابط هنا:
+      GAS_URL : 'https://script.google.com/macros/s/XXXXX/exec'
+   2) (اختياري) ACCESS_KEY : مفتاح سري يطابق الموجود في Code.gs
+   إذا تركت GAS_URL فارغًا سيعمل النموذج في وضع معاينة تجريبي.
+   ═══════════════════════════════════════════════════════════ */
+const CONFIG = {
+  GAS_URL: 'https://script.google.com/macros/s/AKfycbyj_oPtq8EuKl2dnazfbZuVKr9YACaXBPCR5t6kcXNohjpjg2rW3us4I5enJVYH5yKI/exec',
+  ACCESS_KEY: '0100'
+};
+
+const API_READY = /^https:\/\/script\.google\.com\/.+\/exec$/.test(CONFIG.GAS_URL);
+
+/* ================= أدوات عامة ================= */
+const $  = (s,c)=> (c||document).querySelector(s);
+const $$ = (s,c)=> Array.from((c||document).querySelectorAll(s));
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const AR='٠١٢٣٤٥٦٧٨٩';
+const toEn = s => String(s).replace(/[٠-٩]/g,d=>AR.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+
+const GOVS={'01':'القاهرة','02':'الإسكندرية','03':'بورسعيد','04':'السويس','11':'الدقهلية','12':'الشرقية',
+'13':'القليوبية','14':'كفر الشيخ','15':'الغربية','16':'المنوفية','17':'البحيرة','18':'الإسماعيلية',
+'19':'الجيزة','21':'بني سويف','22':'الفيوم','23':'المنيا','24':'أسيوط','25':'سوهاج','26':'قنا',
+'27':'أسوان','28':'البحر الأحمر','29':'مطروح','31':'شمال سيناء','32':'جنوب سيناء','33':'الوادي الجديد','88':'خارج مصر'};
+
+const now = new Date();
+ $('#todayDate').textContent = now.toLocaleDateString('ar-EG',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ $('#printDate').textContent = now.toLocaleDateString('ar-EG',{day:'2-digit',month:'2-digit',year:'numeric'});
+
+/* ================= توست ================= */
+function toast(type,msg){
+  const t=document.createElement('div');
+  t.className='toast '+(type==='ok'?'':type);
+  const icon = type==='ok' ? 'i-check' : 'i-alert';
+  t.innerHTML='<svg><use href="#'+icon+'"/></svg><span>'+esc(msg)+'</span>';
+  $('#toastBox').appendChild(t);
+  setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),320);},5200);
+}
+
+/* ═══════════ طبقة الاتصال بالسيرفر (GAS API) ═══════════ */
+
+/* POST مباشر عبر fetch — Content-Type نصي لتجنّب preflight CORS */
+function postJson(payload){
+  const ctrl = new AbortController();
+  const t = setTimeout(()=>ctrl.abort(), 25000);
+  return fetch(CONFIG.GAS_URL, {
+    method:'POST', redirect:'follow',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body: JSON.stringify(payload), signal: ctrl.signal
+  }).then(r=>{
+    clearTimeout(t);
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  }).catch(e=>{ clearTimeout(t); throw e; });
+}
+
+/* JSONP — بديل احتياطي يتجاوز CORS تمامًا عبر وسم script */
+function jsonp(params){
+  return new Promise((resolve,reject)=>{
+    const cb='__gasCb_'+Date.now()+'_'+Math.floor(Math.random()*1e6);
+    const s=document.createElement('script');
+    let done=false;
+    const cleanup=()=>{ if(done)return; done=true; clearTimeout(timer); try{delete window[cb];}catch(e){} s.remove(); };
+    const timer=setTimeout(()=>{ cleanup(); reject(new Error('انتهت مهلة الاتصال بالخادم')); },30000);
+    window[cb]=data=>{ cleanup(); resolve(data); };
+    s.onerror=()=>{ cleanup(); reject(new Error('فشل الاتصال بالخادم')); };
+    const q=new URLSearchParams(params); q.set('callback',cb);
+    s.src=CONFIG.GAS_URL+'?'+q.toString();
+    document.head.appendChild(s);
+  });
+}
+
+async function withFallback(payload, fallbackFn){
+  try{ return await postJson(payload); }
+  catch(e){ return await fallbackFn(); } /* لو حجب المتصفح الاستجابة → JSONP */
+}
+
+function apiSave(data){
+  return withFallback(
+    {action:'save', key:CONFIG.ACCESS_KEY, data:data},
+    ()=>jsonp({action:'save', data:JSON.stringify(data), key:CONFIG.ACCESS_KEY})
+  );
+}
+function apiSearch(nid){
+  return withFallback(
+    {action:'search', key:CONFIG.ACCESS_KEY, nationalId:nid},
+    ()=>jsonp({action:'search', nid:nid, key:CONFIG.ACCESS_KEY})
+  );
+}
+
+function callServer(fn,arg){
+  if(!API_READY) return mockCall(fn,arg);
+  return fn==='search' ? apiSearch(arg) : apiSave(arg);
+}
+
+/* وضع المعاينة المحلي — يعمل فقط عندما يكون GAS_URL فارغًا */
+const LS='tf07_demo';
+function mockCall(fn,arg){
+  return new Promise(res=>setTimeout(()=>{
+    const list=JSON.parse(localStorage.getItem(LS)||'[]');
+    if(fn==='save'){
+      const old=list.find(r=>r.nid===arg.nationalId);
+      if(old) return res({status:'duplicate',requestId:old.row[0]});
+      const id='DEMO-'+String(list.length+1).padStart(4,'0');
+      const row=[id,arg.fullName,arg.birthDate,arg.gender,arg.phone,arg.qualification,arg.specialty,
+                 arg.workedBefore,(arg.workedBefore==='نعم'?arg.schoolName:'—'),
+                 new Date().toLocaleString('ar-EG')];
+      list.push({nid:arg.nationalId,row});
+      localStorage.setItem(LS,JSON.stringify(list));
+      res({status:'success',requestId:id});
+    }else if(fn==='search'){
+      res(list.filter(r=>r.nid===arg).map(r=>r.row));
+    }
+  },650));
+}
+
+/* ================= الرقم القومي ================= */
+function parseNid(v){
+  if(!/^[23]\d{13}$/.test(v)) return null;
+  const year=(v[0]==='2'?1900:2000)+ +v.slice(1,3);
+  const month=+v.slice(3,5), day=+v.slice(5,7);
+  const d=new Date(year,month-1,day);
+  if(d.getFullYear()!==year||d.getMonth()!==month-1||d.getDate()!==day) return null;
+  if(year>now.getFullYear()||year<1900) return null;
+  const gov=GOVS[v.slice(7,9)];
+  if(!gov) return null;
+  return {birth:String(day).padStart(2,'0')+'/'+String(month).padStart(2,'0')+'/'+year,
+          gender:(+v[12]%2?'ذكر':'أنثى'), gov:gov};
+}
+
+const nidEl=$('#nationalId'), derived=$('#derived');
+nidEl.addEventListener('input',()=>{
+  const v=toEn(nidEl.value).replace(/\D/g,'').slice(0,14);
+  nidEl.value=v;
+  if(v.length===14){
+    const p=parseNid(v);
+    if(p){
+      derived.className='derived span-3 done';
+      $('#dBirth').textContent=p.birth; $('#dGender').textContent=p.gender; $('#dGov').textContent=p.gov;
+      paint(nidEl,'');
+    }else{
+      derived.className='derived span-3 err';
+      $('#dBirth').textContent='—'; $('#dGender').textContent='—'; $('#dGov').textContent='—';
+      paint(nidEl,'الرقم القومي غير صحيح — تحقق من الأرقام وتاريخ الميلاد');
+    }
+  }else{
+    derived.className='derived span-3';
+    $('#dBirth').textContent='—'; $('#dGender').textContent='—'; $('#dGov').textContent='—';
+    if(nidEl.closest('.field').classList.contains('invalid')) paint(nidEl,'');
+  }
+});
+
+/* ================= تحقق الحقول ================= */
+const validators={
+  fullName:v=>{
+    if(!v.trim()) return 'هذا الحقل مطلوب';
+    const w=v.trim().split(/\s+/);
+    if(w.length<4) return 'اكتب الاسم الرباعي (أربع كلمات على الأقل)';
+    if(!w.every(x=>/^[\u0621-\u064A]{2,}$/.test(x))) return 'اكتب الاسم بالحروف العربية فقط';
+    return '';
+  },
+  nationalId:v=>!v?'هذا الحقل مطلوب':(parseNid(v)?'':'رقم قومي غير صحيح — 14 رقمًا'),
+  phone:v=>!v?'هذا الحقل مطلوب':(/^01[0125]\d{8}$/.test(v)?'':'رقم موبايل غير صحيح (11 رقمًا يبدأ بـ 01)'),
+  address:v=>v.trim().length<5?'اكتب العنوان بالتفصيل':'',
+  qualification:v=>!v?'اختر المؤهل الدراسي':'',
+  specialty:v=>v.trim().length<2?'اكتب التخصص':''
+};
+function paint(el,msg){
+  const f=el.closest('.field'); if(!f) return;
+  f.classList.toggle('invalid',!!msg);
+  f.classList.toggle('valid',!msg&&String(el.value).trim()!=='');
+  const m=f.querySelector('.msg'); if(m) m.textContent=msg||'';
+}
+function checkField(el){
+  const k=el.dataset.validate; if(!k||!validators[k]) return false;
+  const msg=validators[k](el.value); paint(el,msg); return !!msg;
+}
+ $$('#appForm [data-validate]').forEach(el=>{
+  el.addEventListener('blur',()=>checkField(el));
+  el.addEventListener('change',()=>checkField(el));
+  el.addEventListener('input',()=>{
+    const msg=validators[el.dataset.validate](el.value);
+    const f=el.closest('.field');
+    if(!msg) paint(el,'');
+    else if(f.classList.contains('invalid')) paint(el,msg);
+  });
+});
+const phoneEl=$('#phone');
+phoneEl.addEventListener('input',()=>{phoneEl.value=toEn(phoneEl.value).replace(/\D/g,'').slice(0,11);});
+
+/* ================= نعم / لا ================= */
+ $$('input[name="workedBefore"]').forEach(r=>r.addEventListener('change',()=>{
+  $('#wbMsg').textContent='';
+  const yes=$('#wbYes').checked;
+  $('#schoolReveal').classList.toggle('open',yes);
+  if(!yes){ $('#schoolName').value=''; paint($('#schoolName'),''); }
+}));
+
+/* ================= الحفظ ================= */
+function collect(){
+  const wb=$('input[name="workedBefore"]:checked');
+  return {
+    fullName:$('#fullName').value.trim(),
+    nationalId:nidEl.value,
+    birthDate:$('#dBirth').textContent,
+    gender:$('#dGender').textContent,
+    govName:$('#dGov').textContent,
+    phone:phoneEl.value.trim(),
+    address:$('#address').value.trim(),
+    qualification:$('#qualification').value,
+    specialty:$('#specialty').value.trim(),
+    workedBefore:wb?wb.value:'',
+    schoolName:$('#schoolName').value.trim()
+  };
+}
+function validateForm(){
+  let bad=null;
+  $$('#appForm [data-validate]').forEach(el=>{ if(checkField(el)&&!bad) bad=el; });
+  const wb=$('input[name="workedBefore"]:checked');
+  if(!wb){ $('#wbMsg').textContent='اختر «نعم» أو «لا»'; bad=bad||$('#wbYes'); }
+  else if(wb.value==='نعم'){
+    const msg=$('#schoolName').value.trim().length<3?'اكتب اسم المدرسة التي عمل بها':'';
+    paint($('#schoolName'),msg);
+    if(msg) bad=bad||$('#schoolName');
+  }
+  if(bad){ bad.scrollIntoView({behavior:'smooth',block:'center'}); return false; }
+  return true;
+}
+function setBusy(btn,on,text){
+  const lbl=btn.querySelector('.lbl');
+  if(on){ btn.dataset.t=lbl.textContent; lbl.textContent=text; btn.disabled=true; btn.classList.add('busy'); }
+  else{ lbl.textContent=btn.dataset.t; btn.disabled=false; btn.classList.remove('busy'); }
+}
+ $('#saveBtn').addEventListener('click',async()=>{
+  if(!validateForm()){ toast('error','تعذّر الحفظ — يرجى مراجعة الحقول المعلَّمة بالأحمر'); return; }
+  const btn=$('#saveBtn');
+  setBusy(btn,true,'جارٍ الحفظ...');
+  try{
+    const res=await callServer('save',collect());
+    if(res && res.status==='success'){
+      $('#successBar').hidden=false;
+      $('#savedId').textContent=res.requestId;
+      $('#printBtn').classList.add('pulse');
+      toast('ok','تم حفظ الطلب بنجاح برقم '+res.requestId);
+      $('#successBar').scrollIntoView({behavior:'smooth',block:'center'});
+    }else if(res && res.status==='duplicate'){
+      toast('error','هذا الرقم القومي مسجَّل مسبقًا برقم طلب: '+res.requestId);
+    }else{
+      toast('error',(res&&res.message)||'حدث خطأ غير متوقع أثناء الحفظ');
+    }
+  }catch(e){
+    toast('error','تعذر الاتصال بالخادم — تحقق من رابط النشر GAS_URL');
+  }finally{
+    setBusy(btn,false);
+  }
+});
+
+/* ================= الطباعة ================= */
+ $('#printBtn').addEventListener('click',()=>window.print());
+
+/* ================= الاستعلام ================= */
+const modal=$('#queryModal');
+function openModal(){ modal.classList.add('open'); document.body.style.overflow='hidden'; setTimeout(()=>$('#qNid').focus(),260); }
+function closeModal(){ modal.classList.remove('open'); document.body.style.overflow=''; }
+ $('#queryBtn').addEventListener('click',openModal);
+ $('#qClose').addEventListener('click',closeModal);
+modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+const qNid=$('#qNid');
+qNid.addEventListener('input',()=>{ qNid.value=toEn(qNid.value).replace(/\D/g,'').slice(0,14); });
+qNid.addEventListener('keydown',e=>{ if(e.key==='Enter') runQuery(); });
+ $('#qRun').addEventListener('click',runQuery);
+
+const COLS=['رقم الطلب','الاسم الرباعي','تاريخ الميلاد','النوع','رقم الهاتف','المؤهل الدراسي','التخصص','سبق العمل','المدرسة السابقة','تاريخ التقديم'];
+function renderResults(rows){
+  const box=$('#qResult');
+  if(!rows||!rows.length){
+    box.innerHTML='<div class="empty"><svg><use href="#i-search"/></svg><p>لا توجد طلبات مسجَّلة بهذا الرقم القومي</p></div>';
+    return;
+  }
+  let h='<div class="tbl-wrap"><table><thead><tr>'+COLS.map(c=>'<th>'+c+'</th>').join('')+'</tr></thead><tbody>';
+  rows.forEach(r=>{ h+='<tr>'+r.map(c=>'<td>'+esc(c)+'</td>').join('')+'</tr>'; });
+  h+='</tbody></table></div><p class="count">عدد الطلبات المطابقة: <b>'+rows.length+'</b></p>';
+  box.innerHTML=h;
+}
+async function runQuery(){
+  const v=qNid.value;
+  if(!/^[23]\d{13}$/.test(v)){ $('#qMsg').textContent='أدخل رقمًا قوميًا صحيحًا مكوَّنًا من 14 رقمًا'; return; }
+  $('#qMsg').textContent='';
+  setBusy($('#qRun'),true,'جارٍ البحث...');
+  $('#qResult').innerHTML='<div class="empty"><span class="spin2"></span><p>جارٍ البحث في قاعدة البيانات...</p></div>';
+  try{
+    renderResults(await callServer('search',v));
+  }catch(e){
+    $('#qResult').innerHTML='<div class="empty">تعذر الاتصال بالخادم — حاول مرة أخرى</div>';
+  }finally{
+    setBusy($('#qRun'),false);
+  }
+}
+
+/* تنبيه وضع المعاينة */
+if(!API_READY){
+  setTimeout(()=>toast('info','وضع معاينة تجريبي: افتح الملف وضَع رابط نشر Apps Script داخل CONFIG.GAS_URL ليتم الحفظ الفعلي على Google Sheets.'),1200);
+}
+})();
+</script>
+</body>
+</html>
