@@ -20,6 +20,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.7}
 svg{display:inline-block;vertical-align:middle;flex:none}
+img{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 
 /* ===== البنر الحكومي ===== */
 .topline{height:5px;background:var(--gold)}
@@ -27,16 +28,17 @@ svg{display:inline-block;vertical-align:middle;flex:none}
 .banner::before{content:'';position:absolute;inset:0;pointer-events:none;
   background:repeating-linear-gradient(45deg,rgba(255,255,255,.035) 0 2px,transparent 2px 16px)}
 .banner::after{content:'';position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--gold)}
-.banner-inner{max-width:980px;margin:auto;padding:26px 20px 32px;display:flex;gap:20px;align-items:center;position:relative;z-index:1}
-.emblem{width:78px;height:78px;border:2px solid rgba(201,162,75,.85);border-radius:50%;
-  display:grid;place-items:center;background:rgba(255,255,255,.05)}
+.banner-inner{max-width:980px;margin:auto;padding:22px 20px 28px;display:flex;gap:20px;align-items:center;position:relative;z-index:1}
+.emblem{width:84px;height:84px;border-radius:50%;background:#fff;padding:3px;
+  box-shadow:0 0 0 2px var(--gold),0 4px 14px rgba(0,0,0,.3);flex:none}
+.emblem img{width:100%;height:100%;object-fit:contain;border-radius:50%;display:block}
 .gov-line{font-size:12.5px;color:#c6d2e6;font-weight:600;letter-spacing:.3px}
 .titles h1{font-size:clamp(21px,3.4vw,30px);font-weight:900;margin:2px 0;line-height:1.35}
 .titles .sub{color:var(--gold);font-weight:700;font-size:15px}
 .banner-side{margin-inline-start:auto;text-align:center;color:#c6d2e6;font-size:12.5px;
   display:flex;flex-direction:column;gap:4px;border-inline-start:1px solid rgba(255,255,255,.18);padding-inline-start:20px}
 .banner-side b{color:#fff;font-size:13px}
-@media(max-width:700px){.banner-side{display:none}.emblem{width:62px;height:62px}}
+@media(max-width:700px){.banner-side{display:none}.emblem{width:64px;height:64px}}
 
 /* ===== البطاقة ===== */
 main{max-width:980px;margin:-26px auto 44px;padding:0 16px;position:relative;z-index:2}
@@ -50,7 +52,7 @@ main{max-width:980px;margin:-26px auto 44px;padding:0 16px;position:relative;z-i
 
 .success{margin:18px 26px 0;display:flex;gap:11px;align-items:flex-start;
   background:var(--ok-bg);border:1.4px solid #bfe0cd;border-radius:9px;padding:13px 16px;color:#14532d;font-size:14px}
-.success svg{width:21px;height:21px;color:var(--ok);margin-top:3px}
+.success svg{width:21px;height:21px;color:var(--ok);margin-top:3px;flex:none}
 .success small{color:#3f6b52}
 
 /* ===== الشبكة والحقول ===== */
@@ -74,7 +76,6 @@ input:focus,select:focus{border-color:var(--navy-l);box-shadow:0 0 0 3px rgba(22
 .vmark svg{width:17px;height:17px}
 .field.valid .vmark{opacity:1}
 
-/* بطاقات البيانات المستخرجة من الرقم القومي */
 .derived{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .d-card{display:flex;gap:12px;align-items:center;border:1.6px dashed var(--line);border-radius:9px;
   padding:12px 14px;background:#f8fafd;opacity:.55;transition:.35s}
@@ -85,7 +86,6 @@ input:focus,select:focus{border-color:var(--navy-l);box-shadow:0 0 0 3px rgba(22
 .derived.err .d-card{opacity:1;border-style:solid;border-color:#eec7c3;background:var(--err-bg)}
 @keyframes pop{from{transform:translateY(6px) scale(.97);opacity:0}}
 
-/* أزرار نعم / لا */
 .seg{display:flex;border:1.6px solid var(--line);border-radius:8px;overflow:hidden;width:max-content}
 .seg label{position:relative}
 .seg input{position:absolute;opacity:0;pointer-events:none;width:0;height:0;border:0;padding:0}
@@ -122,16 +122,23 @@ input:focus,select:focus{border-color:var(--navy-l);box-shadow:0 0 0 3px rgba(22
 .btn.pulse{animation:pulse 1.6s ease infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(23,122,69,.45)}55%{box-shadow:0 0 0 9px rgba(23,122,69,0)}}
 
-.sign-row{display:none;margin:30px 26px 26px;justify-content:space-between;gap:30px;font-weight:700;font-size:14px;flex-wrap:wrap}
-.sign-row .u{display:inline-block;min-width:190px;border-bottom:1.6px dotted #444;margin-inline-start:8px}
-
 .foot{text-align:center;color:var(--mut);font-size:12.5px;margin-top:18px}
+
+/* ===== شارة حالة الطلب ===== */
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;
+  padding:3px 12px;border-radius:20px;border:1.4px solid;white-space:nowrap}
+.badge::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor}
+.st-wait{color:#92600a;background:#fdf5e2;border-color:#e4c47c}
+.st-ok{color:#177a45;background:#e8f5ee;border-color:#b4dcc4}
+.st-no{color:#bf3b30;background:#fdeeec;border-color:#efc0ba}
+.st-hire{color:#155e9c;background:#e7f1fb;border-color:#b0d2ee}
+.st-other{color:#4b5563;background:#f1f3f6;border-color:#cfd6df}
 
 /* ===== نافذة الاستعلام ===== */
 .modal{position:fixed;inset:0;background:rgba(9,29,58,.6);backdrop-filter:blur(3px);display:grid;place-items:center;
   padding:18px;z-index:50;opacity:0;visibility:hidden;transition:.25s}
 .modal.open{opacity:1;visibility:visible}
-.modal-card{background:#fff;border-radius:12px;width:min(940px,96vw);max-height:88vh;display:flex;flex-direction:column;
+.modal-card{background:#fff;border-radius:12px;width:min(980px,96vw);max-height:88vh;display:flex;flex-direction:column;
   transform:translateY(14px);transition:.25s;box-shadow:0 30px 70px rgba(0,0,0,.35)}
 .modal.open .modal-card{transform:none}
 .modal-head{display:flex;align-items:center;gap:10px;padding:15px 22px;border-bottom:1px solid var(--line)}
@@ -146,7 +153,7 @@ input:focus,select:focus{border-color:var(--navy-l);box-shadow:0 0 0 3px rgba(22
 .q-row .control{flex:1;min-width:230px}
 #qMsg{display:block;min-height:0;margin-top:4px}
 .tbl-wrap{margin-top:16px;border:1px solid var(--line);border-radius:9px;overflow:auto}
-table{width:100%;border-collapse:collapse;font-size:13px;min-width:780px}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:860px}
 thead th{background:var(--navy);color:#fff;font-weight:700;padding:10px 12px;text-align:right;white-space:nowrap;font-size:12.5px}
 tbody td{padding:9px 12px;border-top:1px solid #e8edf4;white-space:nowrap}
 tbody tr:nth-child(even){background:#f7f9fc}
@@ -155,6 +162,11 @@ tbody tr:nth-child(even){background:#f7f9fc}
 .count{margin-top:12px;font-size:13px;color:var(--mut)}
 .spin2{display:inline-block;width:26px;height:26px;border:3px solid var(--line);border-top-color:var(--navy);
   border-radius:50%;animation:rot .8s linear infinite;margin-bottom:10px}
+.pbtn{display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:12px;font-weight:700;
+  padding:5px 12px;border-radius:7px;border:1.4px solid var(--gold);color:var(--gold-d);background:#fffdf7;
+  cursor:pointer;transition:.2s}
+.pbtn svg{width:13px;height:13px}
+.pbtn:hover{background:var(--gold);color:#fff}
 
 /* ===== التوست ===== */
 #toastBox{position:fixed;bottom:26px;right:0;left:0;display:flex;flex-direction:column;align-items:center;
@@ -169,17 +181,56 @@ tbody tr:nth-child(even){background:#f7f9fc}
 @keyframes tin{from{transform:translateY(16px);opacity:0}}
 @keyframes tout{to{transform:translateY(10px);opacity:0}}
 
-@page{size:A4;margin:12mm}
+/* ═══════════════════════════════════════════════════
+   المستند الرسمي للطباعة — A4 صفحة واحدة
+   ═══════════════════════════════════════════════════ */
+#printDoc{display:none}
+
+@page{size:A4 portrait;margin:10mm 12mm}
 @media print{
   body{background:#fff}
-  .no-print,#toastBox,.modal,.topline{display:none !important}
-  main{margin:0;max-width:100%;padding:0}
-  .card{box-shadow:none;border:1px solid #9fb0c6;border-radius:0;animation:none}
-  .card-head{background:#fff}
-  .banner{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .seg span{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .sign-row{display:flex}
+  #app,#toastBox,.modal{display:none !important}
+  #printDoc{display:block}
+
+  .doc{width:100%;max-width:186mm;margin:0 auto;color:#1a1a1a;
+       font-size:12.5px;line-height:1.55;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+  .doc-head{display:flex;align-items:center;gap:12px;border-bottom:3px double var(--navy);padding-bottom:10px}
+  .doc-logo{width:23mm;height:23mm;flex:none}
+  .doc-logo img{width:100%;height:100%;object-fit:contain}
+  .doc-center{flex:1;text-align:center}
+  .doc-center .l1{font-size:14px;font-weight:800;color:var(--navy)}
+  .doc-center .l2{font-size:12px;font-weight:600;color:#33465c}
+  .doc-center .l3{font-size:13.5px;font-weight:900;color:var(--gold-d);margin-top:2px}
+  .doc-meta{text-align:left;font-size:11.5px;color:#33465c;flex:none;min-width:44mm;line-height:1.9}
+  .doc-meta b{color:var(--navy)}
+
+  .doc-title{margin:12px auto 10px;text-align:center;background:var(--navy);color:#fff;
+    font-size:15.5px;font-weight:800;padding:7px 18px;border-radius:6px;border:2px solid var(--gold);
+    display:table;box-shadow:none}
+
+  .doc-intro{font-size:12.5px;margin-bottom:10px;text-align:justify}
+  .doc-intro b{color:var(--navy)}
+
+  .doc-table{width:100%;border-collapse:collapse}
+  .doc-table td,.doc-table th{border:1.2px solid #8fa3bd;padding:5.5px 10px;vertical-align:middle}
+  .doc-table .lbl{background:#eef2f8;color:var(--navy);font-weight:700;width:30mm;font-size:11.5px;white-space:nowrap}
+  .doc-table .val{font-weight:600}
+
+  .doc-status{display:flex;align-items:center;gap:10px;margin:10px 0 8px;font-size:12.5px;font-weight:700;color:var(--navy)}
+
+  .doc-declare{font-size:11.5px;color:#33465c;border:1.2px dashed #8fa3bd;border-radius:6px;
+    padding:7px 12px;background:#f8fafd;margin-bottom:14px}
+
+  .doc-signs{display:flex;justify-content:space-between;gap:16px;margin-top:10px;padding:0 4mm}
+  .doc-signs .s{text-align:center;font-size:12px;font-weight:700;color:var(--navy);min-width:42mm}
+  .doc-signs .s .line{margin-bottom:34mm;border-bottom:1.6px dotted #444}
+  .doc-note{text-align:center;font-size:10.5px;color:#8a97a8;margin-top:6mm;
+    border-top:1px solid #d8dfea;padding-top:3mm}
 }
+
+/* شاشة صغيرة: نافذة الاستعلام كاملة العرض */
+@media(max-width:540px){.modal-card{width:100vw;height:100vh;max-height:100vh;border-radius:0}}
 </style>
 </head>
 <body>
@@ -203,16 +254,13 @@ tbody tr:nth-child(even){background:#f7f9fc}
   <symbol id="i-v" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
 </svg>
 
+<!-- ═══════ واجهة التطبيق (تُخفى عند الطباعة) ═══════ -->
+<div id="app">
 <div class="topline"></div>
 
 <header class="banner">
   <div class="banner-inner">
-    <div class="emblem">
-      <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="#c9a24b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 7c-1.9-1.5-4.8-2.1-8-2.1v12.8c3.2 0 6.1.6 8 2.1 1.9-1.5 4.8-2.1 8-2.1V4.9c-3.2 0-6.1.6-8 2.1z"/>
-        <path d="M12 7v12.8M9.2 2.4 12 1l2.8 1.4"/>
-      </svg>
-    </div>
+    <div class="emblem"><img src="logo.png" alt="شعار المدرسة" onerror="this.parentNode.style.visibility='hidden'"></div>
     <div class="titles">
       <p class="gov-line">جمهورية مصر العربية &middot; وزارة التربية والتعليم والتعليم الفني</p>
       <h1>طلب تقديم للعمل معلّم حصة</h1>
@@ -236,7 +284,7 @@ tbody tr:nth-child(even){background:#f7f9fc}
       <svg><use href="#i-check"/></svg>
       <div>
         تم استلام طلبك بنجاح وحفظه في قاعدة البيانات — <b>رقم الطلب: <span id="savedId"></span></b><br>
-        <small>يُرجى طباعة نسخة من الطلب والاحتفاظ بها للمراجعة.</small>
+        <small>اضغط «طباعة» للحصول على نسخة ورقية رسمية من الطلب.</small>
       </div>
     </div>
 
@@ -339,28 +387,94 @@ tbody tr:nth-child(even){background:#f7f9fc}
       </div>
     </form>
 
-    <div class="actions no-print">
+    <div class="actions">
       <button type="button" class="btn btn-primary" id="saveBtn">
         <span class="sp"></span>
         <svg class="ic"><use href="#i-save"/></svg><span class="lbl">حفظ الطلب</span>
       </button>
       <button type="button" class="btn btn-outline" id="printBtn">
-        <svg><use href="#i-print"/></svg><span class="lbl">طباعة النموذج</span>
+        <svg><use href="#i-print"/></svg><span class="lbl">طباعة الطلب</span>
       </button>
       <button type="button" class="btn btn-gold" id="queryBtn">
         <svg><use href="#i-search"/></svg><span class="lbl">استعلام برقم قومي</span>
       </button>
     </div>
-
-    <div class="sign-row">
-      <div>توقيع مقدّم الطلب<span class="u"></span></div>
-      <div>تاريخ التقديم<span class="u" id="printDate"></span></div>
-    </div>
   </section>
 
   <p class="foot">مدرسة قرية 7 الابتدائية — جميع البيانات تُحفظ بسرّية وتُستخدم لأغراض التقديم فقط.</p>
 </main>
+</div><!-- /#app -->
 
+<!-- ═══════ المستند الرسمي (يظهر عند الطباعة فقط) ═══════ -->
+<div id="printDoc">
+  <div class="doc">
+    <div class="doc-head">
+      <div class="doc-logo"><img src="logo.png" alt="" onerror="this.style.display='none'"></div>
+      <div class="doc-center">
+        <div class="l1">جمهورية مصر العربية</div>
+        <div class="l2">وزارة التربية والتعليم والتعليم الفني</div>
+        <div class="l3">مدرسة قرية 7 الابتدائية</div>
+      </div>
+      <div class="doc-meta">
+        رقم الطلب: <b id="docReqId">—</b><br>
+        التاريخ: <b id="docDate">—</b>
+      </div>
+    </div>
+
+    <div class="doc-title">طلب تقديم للعمل معلّم حصة</div>
+
+    <p class="doc-intro">
+      السيد المحترم / مدير مدرسة قرية 7 الابتدائية &nbsp;&mdash;&nbsp; <b>تحية طيبة،</b><br>
+      يشرفني أن أتقدّم لسيادتكم بطلبي للعمل <b>معلّم حصة</b> بالمدرسة المكرَّمة، وتجدون بياناتي في الجدول التالي:
+    </p>
+
+    <table class="doc-table">
+      <tr>
+        <td class="lbl">الاسم الرباعي</td>
+        <td class="val" colspan="3" id="docName">—</td>
+      </tr>
+      <tr>
+        <td class="lbl">الرقم القومي</td><td class="val" id="docNid">—</td>
+        <td class="lbl">تاريخ الميلاد</td><td class="val" id="docBirth">—</td>
+      </tr>
+      <tr>
+        <td class="lbl">النوع</td><td class="val" id="docGender">—</td>
+        <td class="lbl">محافظة الميلاد</td><td class="val" id="docGov">—</td>
+      </tr>
+      <tr>
+        <td class="lbl">رقم الهاتف</td><td class="val" id="docPhone">—</td>
+        <td class="lbl">المؤهل الدراسي</td><td class="val" id="docQual">—</td>
+      </tr>
+      <tr>
+        <td class="lbl">التخصص</td><td class="val" id="docSpec">—</td>
+        <td class="lbl">سبق العمل بالمدارس</td><td class="val" id="docWorked">—</td>
+      </tr>
+      <tr>
+        <td class="lbl">المدرسة السابقة</td><td class="val" colspan="3" id="docSchool">—</td>
+      </tr>
+      <tr>
+        <td class="lbl">العنوان</td><td class="val" colspan="3" id="docAddress">—</td>
+      </tr>
+    </table>
+
+    <div class="doc-status">حالة الطلب: <span class="badge st-wait" id="docStatus">قيد المراجعة</span></div>
+
+    <p class="doc-declare">
+      <b>إقرار:</b> أُقرّ أنا الموقّع أدناه بأن جميع البيانات الواردة بهذا الطلب صحيحة ومطابقة لما هو مثبَّت
+      في مستنداتي الرسمية، وأتحمّل كامل المسؤولية القانونية في حال ثبوت خلاف ذلك.
+    </p>
+
+    <div class="doc-signs">
+      <div class="s"><div class="line"></div>توقيع مقدّم الطلب</div>
+      <div class="s"><div class="line"></div>مدير المدرسة</div>
+      <div class="s"><div class="line"></div>ختم المدرسة</div>
+    </div>
+
+    <div class="doc-note">يُحفظ هذا الطلب إلكترونيًا في سجلّات المدرسة — مدرسة قرية 7 الابتدائية</div>
+  </div>
+</div>
+
+<!-- نافذة الاستعلام -->
 <div class="modal" id="queryModal" role="dialog" aria-modal="true">
   <div class="modal-card">
     <div class="modal-head">
@@ -391,15 +505,13 @@ tbody tr:nth-child(even){background:#f7f9fc}
 'use strict';
 
 /* ═══════════════════════════════════════════════════════════
-   ★★★ الإعدادات — الخطوة الوحيدة المطلوبة منك ★★★
-   1) انشر Code.gs كتطبيق ويب (Web App) وضع الرابط هنا:
-      GAS_URL : 'https://script.google.com/macros/s/XXXXX/exec'
-   2) (اختياري) ACCESS_KEY : مفتاح سري يطابق الموجود في Code.gs
-   إذا تركت GAS_URL فارغًا سيعمل النموذج في وضع معاينة تجريبي.
+   ★★★ الإعدادات ★★★
+   GAS_URL  : رابط نشر Apps Script (ينتهي بـ /exec)
+   ACCESS_KEY : مفتاح سري يطابق الموجود في Code.gs (اختياري)
    ═══════════════════════════════════════════════════════════ */
 const CONFIG = {
-  GAS_URL: 'https://script.google.com/macros/s/AKfycbyj_oPtq8EuKl2dnazfbZuVKr9YACaXBPCR5t6kcXNohjpjg2rW3us4I5enJVYH5yKI/exec',
-  ACCESS_KEY: '0100'
+  GAS_URL: '',
+  ACCESS_KEY: ''
 };
 
 const API_READY = /^https:\/\/script\.google\.com\/.+\/exec$/.test(CONFIG.GAS_URL);
@@ -418,7 +530,6 @@ const GOVS={'01':'القاهرة','02':'الإسكندرية','03':'بورسعي
 
 const now = new Date();
  $('#todayDate').textContent = now.toLocaleDateString('ar-EG',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
- $('#printDate').textContent = now.toLocaleDateString('ar-EG',{day:'2-digit',month:'2-digit',year:'numeric'});
 
 /* ================= توست ================= */
 function toast(type,msg){
@@ -430,9 +541,7 @@ function toast(type,msg){
   setTimeout(()=>{t.classList.add('out');setTimeout(()=>t.remove(),320);},5200);
 }
 
-/* ═══════════ طبقة الاتصال بالسيرفر (GAS API) ═══════════ */
-
-/* POST مباشر عبر fetch — Content-Type نصي لتجنّب preflight CORS */
+/* ═══════════ طبقة الاتصال بالسيرفر ═══════════ */
 function postJson(payload){
   const ctrl = new AbortController();
   const t = setTimeout(()=>ctrl.abort(), 25000);
@@ -446,8 +555,6 @@ function postJson(payload){
     return r.json();
   }).catch(e=>{ clearTimeout(t); throw e; });
 }
-
-/* JSONP — بديل احتياطي يتجاوز CORS تمامًا عبر وسم script */
 function jsonp(params){
   return new Promise((resolve,reject)=>{
     const cb='__gasCb_'+Date.now()+'_'+Math.floor(Math.random()*1e6);
@@ -462,32 +569,30 @@ function jsonp(params){
     document.head.appendChild(s);
   });
 }
-
 async function withFallback(payload, fallbackFn){
   try{ return await postJson(payload); }
-  catch(e){ return await fallbackFn(); } /* لو حجب المتصفح الاستجابة → JSONP */
+  catch(e){ return await fallbackFn(); }
 }
-
 function apiSave(data){
-  return withFallback(
-    {action:'save', key:CONFIG.ACCESS_KEY, data:data},
-    ()=>jsonp({action:'save', data:JSON.stringify(data), key:CONFIG.ACCESS_KEY})
-  );
+  return withFallback({action:'save', key:CONFIG.ACCESS_KEY, data:data},
+    ()=>jsonp({action:'save', data:JSON.stringify(data), key:CONFIG.ACCESS_KEY}));
 }
 function apiSearch(nid){
-  return withFallback(
-    {action:'search', key:CONFIG.ACCESS_KEY, nationalId:nid},
-    ()=>jsonp({action:'search', nid:nid, key:CONFIG.ACCESS_KEY})
-  );
+  return withFallback({action:'search', key:CONFIG.ACCESS_KEY, nationalId:nid},
+    ()=>jsonp({action:'search', nid:nid, key:CONFIG.ACCESS_KEY}));
 }
-
 function callServer(fn,arg){
   if(!API_READY) return mockCall(fn,arg);
   return fn==='search' ? apiSearch(arg) : apiSave(arg);
 }
 
-/* وضع المعاينة المحلي — يعمل فقط عندما يكون GAS_URL فارغًا */
+/* وضع المعاينة المحلي */
 const LS='tf07_demo';
+function mockRow(id,d,dateStr){
+  return [id,d.fullName,d.nationalId,d.birthDate,d.gender,d.govName,d.phone,d.address,
+          d.qualification,d.specialty,d.workedBefore,(d.workedBefore==='نعم'?d.schoolName:'—'),
+          dateStr,'قيد المراجعة'];
+}
 function mockCall(fn,arg){
   return new Promise(res=>setTimeout(()=>{
     const list=JSON.parse(localStorage.getItem(LS)||'[]');
@@ -495,10 +600,7 @@ function mockCall(fn,arg){
       const old=list.find(r=>r.nid===arg.nationalId);
       if(old) return res({status:'duplicate',requestId:old.row[0]});
       const id='DEMO-'+String(list.length+1).padStart(4,'0');
-      const row=[id,arg.fullName,arg.birthDate,arg.gender,arg.phone,arg.qualification,arg.specialty,
-                 arg.workedBefore,(arg.workedBefore==='نعم'?arg.schoolName:'—'),
-                 new Date().toLocaleString('ar-EG')];
-      list.push({nid:arg.nationalId,row});
+      list.push({nid:arg.nationalId,row:mockRow(id,arg,new Date().toLocaleString('ar-EG'))});
       localStorage.setItem(LS,JSON.stringify(list));
       res({status:'success',requestId:id});
     }else if(fn==='search'){
@@ -589,7 +691,8 @@ phoneEl.addEventListener('input',()=>{phoneEl.value=toEn(phoneEl.value).replace(
   if(!yes){ $('#schoolName').value=''; paint($('#schoolName'),''); }
 }));
 
-/* ================= الحفظ ================= */
+/* ================= جمع البيانات والحفظ ================= */
+let lastSaved=null; /* آخر طلب محفوظ (للطباعة المباشرة) */
 function collect(){
   const wb=$('input[name="workedBefore"]:checked');
   return {
@@ -631,6 +734,8 @@ function setBusy(btn,on,text){
   try{
     const res=await callServer('save',collect());
     if(res && res.status==='success'){
+      lastSaved=Object.assign(collect(),{requestId:res.requestId,status:'قيد المراجعة',
+        date:new Date().toLocaleString('ar-EG')});
       $('#successBar').hidden=false;
       $('#savedId').textContent=res.requestId;
       $('#printBtn').classList.add('pulse');
@@ -648,8 +753,43 @@ function setBusy(btn,on,text){
   }
 });
 
-/* ================= الطباعة ================= */
- $('#printBtn').addEventListener('click',()=>window.print());
+/* ═══════════ المستند الرسمي للطباعة ═══════════ */
+function setStatusBadge(el,status){
+  const map={'قيد المراجعة':'st-wait','مقبول':'st-ok','مرفوض':'st-no','تم التعيين':'st-hire'};
+  const cls=map[status]||'st-other';
+  el.className='badge '+cls;
+  el.textContent=status||'غير محددة';
+}
+function fillPrintDoc(d){
+  $('#docReqId').textContent = d.requestId || '—';
+  $('#docDate').textContent  = d.date || now.toLocaleDateString('ar-EG',{day:'2-digit',month:'2-digit',year:'numeric'});
+  $('#docName').textContent  = d.fullName || '—';
+  $('#docNid').textContent   = d.nationalId || '—';
+  $('#docBirth').textContent = d.birthDate || '—';
+  $('#docGender').textContent= d.gender || '—';
+  $('#docGov').textContent   = d.govName || '—';
+  $('#docPhone').textContent = d.phone || '—';
+  $('#docQual').textContent  = d.qualification || '—';
+  $('#docSpec').textContent  = d.specialty || '—';
+  $('#docWorked').textContent= d.workedBefore || '—';
+  $('#docSchool').textContent= d.workedBefore==='نعم' ? (d.schoolName||'—') : '—';
+  $('#docAddress').textContent = d.address || '—';
+  setStatusBadge($('#docStatus'), d.status || 'قيد المراجعة');
+}
+ $('#printBtn').addEventListener('click',()=>{
+  /* يطبع البيانات الحالية بالفورم — وإن كان الطلب محفوظًا يُرفق رقم الطلب وحالته */
+  const d=collect();
+  if(lastSaved && lastSaved.nationalId===d.nationalId){
+    d.requestId=lastSaved.requestId; d.status=lastSaved.status; d.date=lastSaved.date;
+  }
+  if(!d.fullName && !d.nationalId){
+    toast('info','أكمل بيانات النموذج أولًا ثم اضغط طباعة');
+    $('#fullName').focus();
+    return;
+  }
+  fillPrintDoc(d);
+  window.print();
+});
 
 /* ================= الاستعلام ================= */
 const modal=$('#queryModal');
@@ -664,18 +804,60 @@ qNid.addEventListener('input',()=>{ qNid.value=toEn(qNid.value).replace(/\D/g,''
 qNid.addEventListener('keydown',e=>{ if(e.key==='Enter') runQuery(); });
  $('#qRun').addEventListener('click',runQuery);
 
-const COLS=['رقم الطلب','الاسم الرباعي','تاريخ الميلاد','النوع','رقم الهاتف','المؤهل الدراسي','التخصص','سبق العمل','المدرسة السابقة','تاريخ التقديم'];
+/* أعمدة الشيت كما يرد من السيرفر (كامل الصف) */
+const HEADERS=['رقم الطلب','الاسم الرباعي','الرقم القومي','تاريخ الميلاد','النوع','محافظة الميلاد',
+'رقم الهاتف','العنوان','المؤهل الدراسي','التخصص','سبق العمل بالمدارس','اسم المدرسة السابقة',
+'تاريخ وتوقيت التقديم','حالة الطلب'];
+
+function rowToObj(r){
+  const o={};
+  HEADERS.forEach((h,i)=>o[h]=r[i]);
+  return {
+    requestId:o['رقم الطلب'], fullName:o['الاسم الرباعي'], nationalId:o['الرقم القومي'],
+    birthDate:o['تاريخ الميلاد'], gender:o['النوع'], govName:o['محافظة الميلاد'],
+    phone:o['رقم الهاتف'], address:o['العنوان'], qualification:o['المؤهل الدراسي'],
+    specialty:o['التخصص'], workedBefore:o['سبق العمل بالمدارس'],
+    schoolName:o['اسم المدرسة السابقة'], date:o['تاريخ وتوقيت التقديم'], status:o['حالة الطلب']
+  };
+}
+
+let lastRows=[];
 function renderResults(rows){
   const box=$('#qResult');
   if(!rows||!rows.length){
     box.innerHTML='<div class="empty"><svg><use href="#i-search"/></svg><p>لا توجد طلبات مسجَّلة بهذا الرقم القومي</p></div>';
     return;
   }
-  let h='<div class="tbl-wrap"><table><thead><tr>'+COLS.map(c=>'<th>'+c+'</th>').join('')+'</tr></thead><tbody>';
-  rows.forEach(r=>{ h+='<tr>'+r.map(c=>'<td>'+esc(c)+'</td>').join('')+'</tr>'; });
-  h+='</tbody></table></div><p class="count">عدد الطلبات المطابقة: <b>'+rows.length+'</b></p>';
+  lastRows=rows;
+  let h='<div class="tbl-wrap"><table><thead><tr>'+
+    ['رقم الطلب','الاسم الرباعي','المؤهل الدراسي','التخصص','النوع','رقم الهاتف','حالة الطلب','تاريخ التقديم','طباعة']
+    .map(c=>'<th>'+c+'</th>').join('')+'</tr></thead><tbody>';
+  rows.forEach((r,i)=>{
+    const o=rowToObj(r);
+    const st=esc(o.status||'');
+    h+='<tr>'+
+      '<td><b>'+esc(o.requestId)+'</b></td>'+
+      '<td>'+esc(o.fullName)+'</td>'+
+      '<td>'+esc(o.qualification)+'</td>'+
+      '<td>'+esc(o.specialty)+'</td>'+
+      '<td>'+esc(o.gender)+'</td>'+
+      '<td>'+esc(o.phone)+'</td>'+
+      '<td><span class="badge"></span></td>'.replace('<span class="badge"></span>',
+        '<span class="badge '+(function(){return {'قيد المراجعة':'st-wait','مقبول':'st-ok','مرفوض':'st-no','تم التعيين':'st-hire'}[o.status]||'st-other';})()+'">'+st+'</span>')+
+      '<td>'+esc(o.date)+'</td>'+
+      '<td><button class="pbtn" data-i="'+i+'" title="طباعة هذا الطلب"><svg><use href="#i-print"/></svg>طباعة</button></td>'+
+    '</tr>';
+  });
+  h+='</tbody></table></div><p class="count">عدد الطلبات المطابقة: <b>'+rows.length+'</b> — اضغط «طباعة» لطباعة مستند رسمي لأي طلب.</p>';
   box.innerHTML=h;
 }
+/* زر الطباعة داخل نتائج الاستعلام */
+ $('#qResult').addEventListener('click',e=>{
+  const b=e.target.closest('.pbtn'); if(!b) return;
+  const o=rowToObj(lastRows[+b.dataset.i]);
+  fillPrintDoc(o);
+  window.print();
+});
 async function runQuery(){
   const v=qNid.value;
   if(!/^[23]\d{13}$/.test(v)){ $('#qMsg').textContent='أدخل رقمًا قوميًا صحيحًا مكوَّنًا من 14 رقمًا'; return; }
@@ -693,7 +875,7 @@ async function runQuery(){
 
 /* تنبيه وضع المعاينة */
 if(!API_READY){
-  setTimeout(()=>toast('info','وضع معاينة تجريبي: افتح الملف وضَع رابط نشر Apps Script داخل CONFIG.GAS_URL ليتم الحفظ الفعلي على Google Sheets.'),1200);
+  setTimeout(()=>toast('info','وضع معاينة تجريبي: ضع رابط نشر Apps Script في CONFIG.GAS_URL داخل الملف ليتم الحفظ الفعلي على Google Sheets.'),1200);
 }
 })();
 </script>
