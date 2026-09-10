@@ -23,12 +23,42 @@ svg{display:inline-block;vertical-align:middle;flex:none}
 img{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 
 /* ===== البنر الحكومي ===== */
-.topline{height:5px;background:var(--gold)}
-.banner{background:var(--navy);color:#fff;position:relative;overflow:hidden}
-.banner::before{content:'';position:absolute;inset:0;pointer-events:none;
-  background:repeating-linear-gradient(45deg,rgba(255,255,255,.035) 0 2px,transparent 2px 16px)}
-.banner::after{content:'';position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--gold)}
-.banner-inner{max-width:980px;margin:auto;padding:22px 20px 28px;display:flex;gap:20px;align-items:center;position:relative;z-index:1}
+..topline{
+  width: 100%;
+  max-width: 980px;
+  margin: 10px auto 0;
+  height: 5px;
+  background: var(--gold);
+  border-radius: 6px 6px 0 0;
+}
+
+.banner{
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  background: var(--navy);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.banner::before{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:repeating-linear-gradient(45deg,rgba(255,255,255,.035) 0 2,transparent 2px 16px);
+}
+.banner::after{
+  content:''; position:absolute; left:0; right:0; bottom:0; height:4px; background:var(--gold);
+}
+
+.banner-inner{
+  width: 100%;
+  padding: 22px 24px 28px; /* توحيد المسافات الجانبية */
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
 .emblem{width:84px;height:84px;border-radius:50%;background:#fff;padding:3px;
   box-shadow:0 0 0 2px var(--gold),0 4px 14px rgba(0,0,0,.3);flex:none}
 .emblem img{width:100%;height:100%;object-fit:contain;border-radius:50%;display:block}
@@ -41,9 +71,24 @@ img{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 @media(max-width:700px){.banner-side{display:none}.emblem{width:64px;height:64px}}
 
 /* ===== البطاقة ===== */
-main{max-width:980px;margin:-26px auto 44px;padding:0 16px;position:relative;z-index:2}
-.card{background:#fff;border-radius:var(--rad);border:1px solid #e3e8f0;
-  box-shadow:0 12px 34px rgba(13,42,82,.12);overflow:hidden;animation:rise .5s ease both}
+main{
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto 44px;
+  padding: 0; /* أزلنا الـ padding الجانبي لكي تتطابق الحواف 100% مع البنر */
+  position: relative;
+  z-index: 2;
+}
+
+.card{
+  background: #fff;
+  border-radius: 0 0 var(--rad) var(--rad);
+  border: 1px solid #e3e8f0;
+  border-top: none;
+  box-shadow: 0 12px 34px rgba(13,42,82,.12);
+  overflow: hidden;
+  animation: rise .5s ease both;
+}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}}
 .card-head{padding:20px 26px 16px;border-bottom:1px solid var(--line);background:#f8fafd}
 .card-head h2{font-size:18px;font-weight:800;color:var(--navy)}
